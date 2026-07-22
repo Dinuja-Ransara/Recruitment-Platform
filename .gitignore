@@ -438,7 +438,13 @@ dist/
 uploads/
 maildrop/
 
-# Deployment credentials. Publish profiles contain passwords.
-deploy/
+# Deployment. The publish script is tracked because it contains no secrets.
+# Everything else in deploy/ is credentials or build output.
+deploy/*
+!deploy/publish.ps1
+!deploy/README.txt
 *.publishSettings
 *.pubxml.user
+
+# Generated at deploy time, contains the live connection string and signing key.
+src/Meridian.Api/appsettings.Production.json

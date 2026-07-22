@@ -26,7 +26,7 @@ builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 // ---------------------------------------------------------------------------
 var jwtSettings = builder.Configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()
     ?? throw new InvalidOperationException("The Jwt configuration section is missing.");
-jwtSettings.Validate();
+jwtSettings.Validate(builder.Environment.IsDevelopment());
 builder.Services.AddSingleton(Microsoft.Extensions.Options.Options.Create(jwtSettings));
 
 builder.Services
@@ -158,15 +158,15 @@ using (var scope = app.Services.CreateScope())
     await seeder.SeedAsync();
 }
 
-if (app.Environment.IsDevelopment())
+// Swagger is served in every environment, not only development. The coursework
+// requires evidence of API testing and the deployed instance is a demonstration
+// system, so evaluators need to be able to exercise the endpoints directly.
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Meridian API v1");
-        options.DocumentTitle = "Meridian Talent Platform API";
-    });
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Meridian API v1");
+    options.DocumentTitle = "Meridian Talent Platform API";
+});
 
 app.UseCors(CorsPolicy);
 app.UseAuthentication();
