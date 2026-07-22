@@ -74,11 +74,27 @@ builder.Services.AddAuthorization(options =>
 const string CorsPolicy = "MeridianWebClient";
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? new[] { "http://localhost:5173" };
+var allowedOriginSuffixes = builder.Configuration.GetSection("Cors:AllowedOriginSuffixes").Get<string[]>()
+    ?? Array.Empty<string>();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(CorsPolicy, policy => policy
-        .WithOrigins(allowedOrigins)
+        .SetIsOriginAllowed(origin =>
+        {
+            if (allowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            // Cloudflare Pages gives every deployment its own preview subdomain,
+            // so the deployed client's exact origin is not known ahead of time.
+            // Suffix matching covers those without opening the API to any origin.
+            return Uri.TryCreate(origin, UriKind.Absolute, out var uri)
+                   && uri.Scheme == Uri.UriSchemeHttps
+                   && allowedOriginSuffixes.Any(suffix =>
+                       uri.Host.EndsWith(suffix, StringComparison.OrdinalIgnoreCase));
+        })
         .AllowAnyHeader()
         .AllowAnyMethod());
 });

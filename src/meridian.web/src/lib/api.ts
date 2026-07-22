@@ -7,6 +7,15 @@
 
 const TOKEN_KEY = 'meridian.accessToken'
 
+/**
+ * Where the API lives.
+ *
+ * Empty in development, because the Vite dev server proxies /api to the backend
+ * so the browser sees one origin. A deployed build sets VITE_API_BASE_URL to the
+ * public API origin, and CORS on the API allows it explicitly.
+ */
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
+
 export class ApiError extends Error {
   readonly status: number
 
@@ -26,7 +35,7 @@ export const tokenStore = {
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const token = tokenStore.get()
 
-  const response = await fetch(path, {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers: {
       'Content-Type': 'application/json',
