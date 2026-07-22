@@ -3,6 +3,7 @@ using Meridian.Infrastructure.Identity;
 using Meridian.Infrastructure.Persistence;
 using Meridian.Infrastructure.Persistence.Repositories;
 using Meridian.Infrastructure.Security;
+using Meridian.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +34,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<IJobService, JobService>();
         services.AddScoped<DatabaseSeeder>();
 
         // Stateless and thread-safe, so a single instance serves every request.

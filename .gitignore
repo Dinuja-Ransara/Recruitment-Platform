@@ -437,3 +437,8 @@ dist/
 # Local uploads and generated artefacts
 uploads/
 maildrop/
+
+# Deployment credentials. Publish profiles contain passwords.
+deploy/
+*.publishSettings
+*.pubxml.user
