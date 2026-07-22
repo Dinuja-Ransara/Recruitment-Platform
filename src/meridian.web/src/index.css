@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/*
+  Meridian design tokens.
+
+  Deliberately institutional rather than consumer: a graphite text ramp, a single
+  deep teal accent, hairline borders and modest 6px corners. Data-dense screens
+  are the primary surface, so numerals are tabular and table rows stay compact.
+*/
+@theme {
+  --color-ink-900: #0c1421;
+  --color-ink-700: #24303f;
+  --color-ink-500: #5a6875;
+  --color-ink-300: #8b97a4;
+
+  --color-line: #e3e8ed;
+  --color-line-strong: #cbd3db;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f5f7f9;
+
+  --color-accent: #0a5f5a;
+  --color-accent-hover: #0b7a73;
+  --color-accent-soft: #e6f2f1;
+
+  --color-positive: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #b91c1c;
+
+  --radius-card: 6px;
+
+  --font-sans: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "Cascadia Code", "Consolas", monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: var(--color-surface-alt);
+  color: var(--color-ink-900);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Figures line up in columns across every table and metric tile. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
