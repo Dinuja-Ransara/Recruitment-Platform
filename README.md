@@ -1,67 +1,122 @@
-# SA Project Plan: TalentX Recruitment Platform
+<p align="center">
+  <img src="docs/brand/mark-180.png" alt="Meridian" width="120" />
+</p>
 
-**Author:** Dinuja Ransara  
-**Institution:** NSBM Green University, Faculty of Computing  
-**Date:** July 2026  
+<h1 align="center">Meridian Talent Platform</h1>
 
----
-
-## 1. System Architecture (SA) Overview
-The platform utilizes a modern Client-Server architecture based on the **MERN** stack (MongoDB, Express.js, React.js, Node.js). The system is completely decoupled, meaning the frontend and backend operate independently and communicate via a RESTful API.
-
-* **Presentation Layer (Frontend):** Built with React.js using Vite for fast bundling. It is styled with Tailwind CSS to ensure a fully responsive, component-based user interface.
-* **Application Layer (Backend):** Built with Node.js and Express.js to handle all business logic, user authentication, and API routing.
-* **Data Layer (Database):** MongoDB (NoSQL) accessed via the Mongoose Object Data Modeling (ODM) library for flexible, document-based data storage.
+<p align="center">
+  AI-powered recruitment and talent management for a multinational HR consultancy.<br />
+  <strong>SE205.3 Software Architecture</strong> &middot; Group 4 &middot; NSBM Green University
+</p>
 
 ---
 
-## 2. Software Engineering (SE) Methodology
-The project follows an **Iterative/Agile Methodology**. This allows for the continuous testing and refinement of individual system modules (e.g., building and validating the authentication module before moving to the dashboard interfaces).
+## What this is
 
-### 2.1 Core Requirements Analysis
-**Functional Requirements (FRs):** 
-1. The system must allow users to register distinct profiles as either a "Candidate" or a "Recruiter."
-2. Recruiters must be able to post job listings and view applicant profiles via a secure dashboard.
-3. Candidates must be able to view active job listings and submit applications.
+A recruitment platform covering the full hiring lifecycle for four roles:
+candidates, recruiters, hiring managers and administrators. Candidates build a
+profile, upload a CV and apply. The platform parses the CV, extracts skills,
+matches candidates to postings and ranks applicants. Recruiters screen and
+schedule. Hiring managers evaluate and decide. Administrators manage users,
+roles and organisations, and monitor the system.
 
-**Non-Functional Requirements (NFRs):**
-1. **Security:** Passwords must be hashed using bcrypt prior to database insertion.
-2. **Performance:** API responses should resolve in under 500ms to ensure a seamless user experience.
-3. **Usability:** The UI must be fully responsive across mobile, tablet, and desktop interfaces.
+**The scoring engine is not a wrapper around a paid AI API.** It is implemented
+in C# inside this repository: a skill taxonomy with alias resolution, TF-IDF
+vectorisation with cosine similarity, and structured signals for experience,
+education and location fit. It runs offline, needs no API key, costs nothing,
+and because it is deterministic it is covered by unit tests. Every score it
+returns carries a per-factor breakdown explaining how the number was reached.
 
----
+## Architecture
 
-## 3. Application Sitemap (Frontend Page Structure)
-Based on the routing and navigation hierarchy, the frontend consists of the following primary views:
+Layered, with dependencies pointing inward. No layer references anything
+outside its own arrow.
 
-| Page / Route | React Component | Purpose |
-| :--- | :--- | :--- |
-| **`/`** | `LandingPage.jsx` | The main entry point featuring the value proposition, "Home," "Jobs," "News," and "About" sections. |
-| **`/login`** | `Login.jsx` | Dual-purpose authentication portal allowing users to toggle between Candidate and Recruiter sign-in. |
-| **`/register/candidate`** | `CandidateRegister.jsx` | Registration form capturing candidate details (Name, Email, Skills). |
-| **`/register/recruiter`** | `RecruiterRegister.jsx` | Business registration form capturing company legal name, industry, and contact details. |
-| **`/candidate/dashboard`** | `CandidatePortal.jsx` | Private view for job seekers to track applications and update resumes. |
-| **`/recruiter/dashboard`** | `RecruiterPortal.jsx` | Private view for hiring managers to post jobs and review candidates. |
-| **`/admin`** | `AdminDashboard.jsx` | System administrator view for moderating users and platform content. |
+```
+src/
+  Meridian.Domain           entities, enums, domain rules. Zero dependencies.
+  Meridian.Application      interfaces, DTOs, result types.
+  Meridian.Infrastructure   EF Core, repositories, unit of work, security, providers.
+  Meridian.Ai               matching engine, skill taxonomy, parsers, ranking strategies.
+  Meridian.Api              controllers, JWT, authorisation policies, Swagger.
+  meridian.web              React 19 + TypeScript + Vite + Tailwind client.
+tests/
+  Meridian.Ai.Tests         deterministic unit tests over the scoring engine.
+  Meridian.Api.Tests        integration tests through WebApplicationFactory.
+docs/
+  adr/                      architecture decision records.
+  diagrams/                 use case, class and deployment diagrams.
+```
 
----
+| Concern | Choice |
+|---|---|
+| Backend | ASP.NET Core 8 Web API, C# |
+| Database | SQL Server (LocalDB for development), EF Core 8 code-first |
+| Authentication | JWT bearer, BCrypt password hashing at work factor 12 |
+| Authorisation | Role-based, four named policies |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS v4 |
+| API documentation | Swagger / OpenAPI with bearer auth support |
 
-## 4. Backend Connection & Data Flow
-The integration between the React frontend and the Node.js backend follows a strict Request-Response lifecycle. 
+## Design patterns
 
-**Step-by-Step Data Flow (Registration Module Example):**
-1. **Client-Side Capture:** The React component (`CandidateRegister.jsx`) captures user input in a state object.
-2. **API Invocation:** An asynchronous `fetch` request is triggered upon form submission, sending the payload as a JSON string to the backend endpoint (`http://localhost:5000/api/register/candidate`).
-3. **Backend Processing:** The Express.js router intercepts the `POST` request. Controller logic validates the incoming data format.
-4. **Database Transaction:** Mongoose maps the data to the defined `Candidate` schema and saves a new document into the MongoDB database.
-5. **Response:** The backend returns an HTTP status code (e.g., `201 Created`). The React frontend listens for this response and triggers the appropriate UI alert.
+Each pattern earns its place against a real problem rather than being added for
+the sake of the list. Full discussion is in the report, Chapter 4.
 
----
+| Pattern | Where | Problem it solves |
+|---|---|---|
+| Factory Method | `ResumeParserFactory` | Selecting a parser for PDF, DOCX, TXT, JSON or XML without a switch leaking into services |
+| Abstract Factory | `IIntegrationProviderFactory` | Swapping email, SMS, calendar and storage as one consistent family |
+| Singleton | `SkillTaxonomyRegistry` | An expensive, immutable taxonomy loaded once and shared safely |
+| Builder | `AnalyticsQueryBuilder` | Analytics queries with eight optional filters |
+| Prototype | `JobPosting.Clone()` | Reposting a role across Colombo, Singapore and London |
+| Repository | `IRepository<T>` | Isolating EF Core so services can be tested against fakes |
+| Unit of Work | `IUnitOfWork` | Committing application, event, notification and audit writes as one transaction |
+| Dependency Injection | `Program.cs`, `DependencyInjection.cs` | Every dependency is an interface |
+| Strategy | `IRankingStrategy` | Recruiter chooses the ranking algorithm per posting |
+| Observer | `IDomainEventDispatcher` | Status changes fan out without the service knowing its subscribers |
 
-## 5. API Endpoint Architecture
-To fulfill the platform requirements, the backend utilizes the following RESTful routes:
+## Running it
 
-* `POST /api/register/candidate` - Creates a new candidate user entity.
-* `POST /api/register/recruiter` - Creates a new recruiter/business entity.
-* `POST /api/auth/login` - Authenticates user credentials and returns a secure token for session management.
-* `GET /api/jobs` - Fetches active job listings for the public and candidate views.
+Requires the .NET 8 SDK, Node 20 or later, and SQL Server LocalDB.
+
+```bash
+# Backend. Applies migrations and seeds automatically on first run.
+dotnet run --project src/Meridian.Api --launch-profile http
+# API on http://localhost:5138, Swagger at http://localhost:5138/swagger
+
+# Frontend, in a second terminal.
+cd src/meridian.web
+npm install
+npm run dev
+# Client on http://localhost:5173
+```
+
+### Demonstration accounts
+
+All share the password `Meridian#2026`.
+
+| Role | Email |
+|---|---|
+| Administrator | admin@meridian.example.com |
+| Recruiter | recruiter@meridian.example.com |
+| Hiring Manager | manager@meridian.example.com |
+| Candidate | candidate@meridian.example.com |
+
+The seeder is idempotent, so restarting never duplicates data. It creates three
+client organisations across Colombo, Singapore and London, seven departments and
+a skill taxonomy of 25 skills with 32 aliases.
+
+## Testing
+
+```bash
+dotnet test                      # unit and integration tests
+newman run postman/meridian.json # API collection, requires the API running
+```
+
+## Project history
+
+This repository began as an Express and MongoDB prototype. The coursework brief
+mandates a C# ASP.NET Web API over a relational database, so that prototype was
+replaced by the layered architecture described above. The original work is
+preserved on the `archive/express-prototype` branch and is discussed in the
+report under existing systems and problem definition.

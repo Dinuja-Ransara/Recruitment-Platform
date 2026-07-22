@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { api, ApiError } from '../lib/api'
 import { Roles, useAuth } from '../auth/AuthContext'
+import { Brand } from '../components/Brand'
 
 interface Department {
   id: number
@@ -62,12 +63,7 @@ export function DashboardPage() {
     <div className="min-h-full">
       <header className="border-b border-line bg-surface">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div>
-            <p className="text-sm font-semibold tracking-[0.18em] text-accent uppercase">
-              Meridian
-            </p>
-            <p className="text-xs text-ink-500">Talent Platform</p>
-          </div>
+          <Brand size="sm" />
 
           <div className="flex items-center gap-4">
             <div className="text-right">

@@ -3,24 +3,26 @@
 /*
   Meridian design tokens.
 
-  Deliberately institutional rather than consumer: a graphite text ramp, a single
-  deep teal accent, hairline borders and modest 6px corners. Data-dense screens
-  are the primary surface, so numerals are tabular and table rows stay compact.
+  The accent is sampled directly from the Meridian mark (#246DF0) so the brand
+  and the interface agree. Everything around it is deliberately institutional
+  rather than consumer: a navy-leaning ink ramp, hairline borders, modest 6px
+  corners. Data-dense screens are the primary surface, so numerals are tabular
+  and table rows stay compact.
 */
 @theme {
-  --color-ink-900: #0c1421;
-  --color-ink-700: #24303f;
-  --color-ink-500: #5a6875;
-  --color-ink-300: #8b97a4;
+  --color-ink-900: #0b1220;
+  --color-ink-700: #212c3d;
+  --color-ink-500: #586574;
+  --color-ink-300: #8b96a4;
 
-  --color-line: #e3e8ed;
-  --color-line-strong: #cbd3db;
+  --color-line: #e3e7ed;
+  --color-line-strong: #cbd2db;
   --color-surface: #ffffff;
-  --color-surface-alt: #f5f7f9;
+  --color-surface-alt: #f5f7fa;
 
-  --color-accent: #0a5f5a;
-  --color-accent-hover: #0b7a73;
-  --color-accent-soft: #e6f2f1;
+  --color-accent: #246df0;
+  --color-accent-hover: #1a5ad4;
+  --color-accent-soft: #eaf1fe;
 
   --color-positive: #15803d;
   --color-warning: #b45309;

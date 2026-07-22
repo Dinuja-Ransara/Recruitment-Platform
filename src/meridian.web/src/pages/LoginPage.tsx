@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { ApiError } from '../lib/api'
+import { Brand } from '../components/Brand'
 
 const demoAccounts = [
   { role: 'Administrator', email: 'admin@meridian.example.com' },
@@ -52,12 +53,7 @@ export function LoginPage() {
     <div className="grid min-h-full lg:grid-cols-2">
       {/* Brand panel. Hidden below lg so the form owns a small screen entirely. */}
       <div className="hidden flex-col justify-between bg-ink-900 p-12 text-white lg:flex">
-        <div>
-          <p className="text-sm font-semibold tracking-[0.2em] text-accent-soft uppercase">
-            Meridian
-          </p>
-          <p className="mt-1 text-sm text-ink-300">Talent Platform</p>
-        </div>
+        <Brand onDark />
 
         <div className="max-w-md">
           <h1 className="text-3xl leading-tight font-semibold">
