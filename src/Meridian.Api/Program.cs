@@ -149,13 +149,30 @@ var app = builder.Build();
 // runs the project from source with no deployment pipeline; a production system
 // would run migrations as a separate, gated step.
 // ---------------------------------------------------------------------------
+// A database that is unreachable at boot must not prevent the process from
+// starting. On a shared host that turns into an opaque 500.30 with no way to
+// read the cause, so the failure is recorded and surfaced through /api/health
+// instead, leaving Swagger and the rest of the pipeline available.
+string? startupError = null;
+
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<MeridianDbContext>();
-    await context.Database.MigrateAsync();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        var context = scope.ServiceProvider.GetRequiredService<MeridianDbContext>();
+        await context.Database.MigrateAsync();
 
-    var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
-    await seeder.SeedAsync();
+        var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
+        await seeder.SeedAsync();
+
+        logger.LogInformation("Database migrated and seeded successfully.");
+    }
+    catch (Exception ex)
+    {
+        startupError = $"{ex.GetType().Name}: {ex.Message}";
+        logger.LogError(ex, "Database migration or seeding failed during startup.");
+    }
 }
 
 // Swagger is served in every environment, not only development. The coursework
@@ -172,6 +189,38 @@ app.UseCors(CorsPolicy);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+/// <summary>
+/// Liveness and dependency check. Reports whether the database is reachable and
+/// whether the schema was applied at startup, which is the difference between
+/// "the app is down" and "the app is up but its database is not".
+/// </summary>
+app.MapGet("/api/health", async (MeridianDbContext context) =>
+{
+    var canConnect = false;
+    string? databaseError = null;
+
+    try
+    {
+        canConnect = await context.Database.CanConnectAsync();
+    }
+    catch (Exception ex)
+    {
+        databaseError = $"{ex.GetType().Name}: {ex.Message}";
+    }
+
+    var healthy = canConnect && startupError is null;
+
+    return Results.Json(new
+    {
+        status = healthy ? "healthy" : "degraded",
+        environment = app.Environment.EnvironmentName,
+        databaseReachable = canConnect,
+        startupError,
+        databaseError,
+        timestampUtc = DateTime.UtcNow
+    }, statusCode: healthy ? StatusCodes.Status200OK : StatusCodes.Status503ServiceUnavailable);
+}).AllowAnonymous();
 
 app.Run();
 

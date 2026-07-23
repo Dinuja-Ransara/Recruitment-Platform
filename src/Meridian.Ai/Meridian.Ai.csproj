@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Meridian.Domain\Meridian.Domain.csproj" />
-    <ProjectReference Include="..\Meridian.Ai\Meridian.Ai.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
