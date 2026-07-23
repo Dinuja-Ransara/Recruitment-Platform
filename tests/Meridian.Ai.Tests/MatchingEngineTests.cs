@@ -189,4 +189,27 @@ public class MatchingEngineTests
             Assert.InRange(weightTotal, 0.999, 1.001);
         }
     }
+
+    [Fact]
+    public void Factory_rejects_an_empty_strategy_collection_instead_of_failing_later()
+    {
+        // Regression test. A dependency injection container satisfies
+        // IEnumerable<T> with an empty collection when nothing is registered, and
+        // the original code only failed later, inside scoring, as a missing
+        // dictionary key. The constructor must name the real problem instead.
+        var error = Assert.Throws<InvalidOperationException>(
+            () => new RankingStrategyFactory(Array.Empty<IRankingStrategy>()));
+
+        Assert.Contains("No ranking strategies", error.Message);
+    }
+
+    [Fact]
+    public void Factory_requires_the_hybrid_fallback_to_be_present()
+    {
+        var withoutHybrid = new IRankingStrategy[] { new SkillWeightedStrategy(), new ExperienceFirstStrategy() };
+
+        var error = Assert.Throws<InvalidOperationException>(() => new RankingStrategyFactory(withoutHybrid));
+
+        Assert.Contains("Hybrid", error.Message);
+    }
 }

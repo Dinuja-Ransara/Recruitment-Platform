@@ -30,10 +30,30 @@ public class RankingStrategyFactory : IRankingStrategyFactory
     {
     }
 
-    /// <summary>Injection point used by the tests to supply doubles.</summary>
+    /// <summary>
+    /// Used by the container and by tests supplying doubles.
+    ///
+    /// The emptiness check is not defensive padding. A dependency injection
+    /// container will happily satisfy IEnumerable&lt;T&gt; with nothing at all when
+    /// no implementation is registered, and the failure then surfaces much later
+    /// as a missing dictionary key inside scoring. Failing here names the cause.
+    /// </summary>
     public RankingStrategyFactory(IEnumerable<IRankingStrategy> strategies)
     {
         _strategies = strategies.ToDictionary(s => s.Type);
+
+        if (_strategies.Count == 0)
+        {
+            throw new InvalidOperationException(
+                "No ranking strategies were supplied. Register the IRankingStrategy implementations "
+                + "with the container, or use the parameterless constructor for the built-in set.");
+        }
+
+        if (!_strategies.ContainsKey(RankingStrategyType.Hybrid))
+        {
+            throw new InvalidOperationException(
+                "The Hybrid strategy must always be registered: it is the fallback for unrecognised values.");
+        }
     }
 
     public IRankingStrategy Create(RankingStrategyType type)
@@ -43,8 +63,9 @@ public class RankingStrategyFactory : IRankingStrategyFactory
             return strategy;
         }
 
-        // An unknown value in the database must not take ranking offline, so the
-        // balanced default stands in rather than throwing.
+        // An unrecognised value in the database must not take ranking offline, so
+        // the balanced default stands in. The constructor has already guaranteed
+        // it is present.
         return _strategies[RankingStrategyType.Hybrid];
     }
 

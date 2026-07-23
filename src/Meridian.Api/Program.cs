@@ -166,6 +166,9 @@ using (var scope = app.Services.CreateScope())
         var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
         await seeder.SeedAsync();
 
+        var demoSeeder = scope.ServiceProvider.GetRequiredService<DemoDataSeeder>();
+        await demoSeeder.SeedAsync();
+
         logger.LogInformation("Database migrated and seeded successfully.");
     }
     catch (Exception ex)
