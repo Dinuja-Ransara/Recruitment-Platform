@@ -193,19 +193,45 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+// The API root. Without this the base URL is a bare 404, which reads as a broken
+// deployment to anyone checking the link. It points at the documentation instead.
+app.MapGet("/", () => Results.Json(new
+{
+    service = "Meridian Talent Platform API",
+    description = "AI-powered recruitment and talent management. SE205.3 Software Architecture, Group 4, NSBM Green University.",
+    documentation = "/swagger",
+    health = "/api/health",
+    client = "https://meridian-talent.pages.dev"
+})).AllowAnonymous();
+
 /// <summary>
 /// Liveness and dependency check. Reports whether the database is reachable and
 /// whether the schema was applied at startup, which is the difference between
 /// "the app is down" and "the app is up but its database is not".
 /// </summary>
-app.MapGet("/api/health", async (MeridianDbContext context) =>
+app.MapGet("/api/health", async (IConfiguration configuration) =>
 {
     var canConnect = false;
     string? databaseError = null;
 
     try
     {
-        canConnect = await context.Database.CanConnectAsync();
+        // Deliberately not EF's CanConnectAsync. The context is configured with
+        // EnableRetryOnFailure, so a health probe against a failing database
+        // would sit through the whole retry schedule and time the caller out.
+        // A health endpoint has to answer quickly, including when the answer is
+        // bad news, so this opens a raw connection with a short timeout instead.
+        var builder = new Microsoft.Data.SqlClient.SqlConnectionStringBuilder(
+            configuration.GetConnectionString("Default"))
+        {
+            ConnectTimeout = 5
+        };
+
+        await using var connection = new Microsoft.Data.SqlClient.SqlConnection(builder.ConnectionString);
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(8));
+
+        await connection.OpenAsync(cancellation.Token);
+        canConnect = connection.State == System.Data.ConnectionState.Open;
     }
     catch (Exception ex)
     {
