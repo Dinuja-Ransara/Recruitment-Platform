@@ -3,6 +3,7 @@ import { AuthProvider, Roles, useAuth } from './auth/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AppShell } from './components/AppShell'
 import { LoginPage } from './pages/LoginPage'
+import { HomePage } from './pages/HomePage'
 
 import { CandidateOverview } from './pages/candidate/CandidateOverview'
 import { JobSearch } from './pages/candidate/JobSearch'
@@ -36,6 +37,7 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
 
           <Route
