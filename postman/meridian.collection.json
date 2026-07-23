@@ -59,7 +59,17 @@
               "script": {
                 "exec": [
                   "pm.test(\"Login succeeds\", () => pm.response.to.have.status(200));\r",
-                  "pm.environment.set(\"token\", pm.response.json().accessToken);"
+                  "pm.environment.set(\"token\", pm.response.json().accessToken);\r",
+                  "\r",
+                  "const res = pm.response.json();\r",
+                  "\r",
+                  "if (res.token) {\r",
+                  "  pm.collectionVariables.set(\"recruiterToken\", res.token);\r",
+                  "}\r",
+                  "\r",
+                  "if (res.accessToken) {\r",
+                  "  pm.collectionVariables.set(\"recruiterToken\", res.accessToken);\r",
+                  "}"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -141,7 +151,17 @@
               "script": {
                 "exec": [
                   "pm.test(\"Login succeeds\", () => pm.response.to.have.status(200));\r",
-                  "pm.environment.set(\"token\", pm.response.json().accessToken);"
+                  "pm.environment.set(\"token\", pm.response.json().accessToken);\r",
+                  "\r",
+                  "const res = pm.response.json();\r",
+                  "\r",
+                  "if (res.token) {\r",
+                  "  pm.collectionVariables.set(\"candidateToken\", res.token);\r",
+                  "}\r",
+                  "\r",
+                  "if (res.accessToken) {\r",
+                  "  pm.collectionVariables.set(\"candidateToken\", res.accessToken);\r",
+                  "}"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -535,6 +555,199 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Security",
+      "item": [
+        {
+          "name": "organizations",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/organizations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "organizations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "organizations as candidate",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/organizations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "organizations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "system-health as recruiter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Recruiter is refused on admin route\", () => pm.response.to.have.status(403));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/system-health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "system-health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login wrong password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login succeeds\", () => pm.response.to.have.status(200));\r",
+                  "pm.environment.set(\"token\", pm.response.json().accessToken);\r",
+                  "\r",
+                  "const res = pm.response.json();\r",
+                  "\r",
+                  "if (res.token) {\r",
+                  "  pm.collectionVariables.set(\"candidateToken\", res.token);\r",
+                  "}\r",
+                  "\r",
+                  "if (res.accessToken) {\r",
+                  "  pm.collectionVariables.set(\"candidateToken\", res.accessToken);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"candidate@meridian.example.com\",\r\n  \"password\": \"Meridian#20244\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "jobs as candidate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Candidate cannot create jobs\", () => pm.response.to.have.status(403));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Test Job\",\r\n  \"description\": \"Access control test\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "auth": {
@@ -569,6 +782,16 @@
           ""
         ]
       }
+    }
+  ],
+  "variable": [
+    {
+      "key": "candidateToken",
+      "value": ""
+    },
+    {
+      "key": "recruiterToken",
+      "value": ""
     }
   ]
 }
