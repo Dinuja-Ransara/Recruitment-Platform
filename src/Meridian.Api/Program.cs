@@ -161,7 +161,22 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = scope.ServiceProvider.GetRequiredService<MeridianDbContext>();
+
         await context.Database.MigrateAsync();
+
+        // Destructive, and off unless explicitly switched on for one deployment.
+        // The hosted database is on a private network and unreachable from a
+        // developer machine, so rebuilding the demonstration data has to be
+        // triggered from inside the application.
+        //
+        // This deletes rows. It deliberately does NOT drop the database:
+        // on shared hosting the application's login has no CREATE DATABASE
+        // permission, so dropping it leaves a database that nothing can recreate.
+        if (builder.Configuration.GetValue<bool>("Seed:RebuildDemoDataOnStartup"))
+        {
+            logger.LogWarning("Seed:RebuildDemoDataOnStartup is enabled. Clearing all data and reseeding.");
+            await DatabaseMaintenance.ClearAllDataAsync(context);
+        }
 
         var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
         await seeder.SeedAsync();

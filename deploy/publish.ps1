@@ -10,6 +10,15 @@
         pwsh -File deploy/publish.ps1
 #>
 
+param(
+    # Clears every row and reseeds the demonstration data, for this deployment
+    # only. The hosted database is on a private network and cannot be reached
+    # from here, so the rebuild has to be triggered from inside the application.
+    # It deletes rows and never drops the database: the hosting login has no
+    # CREATE DATABASE permission. Always redeploy without this switch afterwards.
+    [switch]$ResetDatabase
+)
+
 $ErrorActionPreference = 'Stop'
 
 $repoRoot   = Split-Path -Parent $PSScriptRoot
@@ -60,6 +69,7 @@ $productionSettings = [ordered]@{
         SigningKey         = $signingKey
         AccessTokenMinutes = 120
     }
+    Seed = [ordered]@{ RebuildDemoDataOnStartup = [bool]$ResetDatabase }
     Cors = [ordered]@{
         AllowedOrigins         = @('https://meridian-talent.pages.dev')
         AllowedOriginSuffixes  = @('meridian-talent.pages.dev')
