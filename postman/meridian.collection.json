@@ -181,7 +181,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"fullName\": \"Test Candidate\",\r\n  \"email\": \"test.candidate2@meridian.example.com\",\r\n  \"password\": \"Meridian#2026\",\r\n  \"city\": \"Colombo\",\r\n  \"country\": \"Sri Lanka\"\r\n}",
+              "raw": "{\r\n  \"fullName\": \"Test 2 Candidate\",\r\n  \"email\": \"test2.candidate2@meridian.example.com\",\r\n  \"password\": \"Meridian#2026\",\r\n  \"city\": \"Colombo 02\",\r\n  \"country\": \"Sri Lanka\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -215,6 +215,159 @@
               "path": [
                 "auth",
                 "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Jobs",
+      "item": [
+        {
+          "name": "Search Jobs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "My Postings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs/mine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs",
+                "mine"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Job",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Job",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"jobId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Senior Backend Engineer\",\r\n  \"description\": \"Build and maintain the recruitment platform APIs.\",\r\n  \"organizationId\": 1,\r\n  \"employmentType\": 0,\r\n  \"seniority\": 2,\r\n  \"workMode\": 1,\r\n  \"minYearsExperience\": 3,\r\n  \"city\": \"Colombo\",\r\n  \"country\": \"Sri Lanka\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Publish Job",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs/13/publish",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs",
+                "13",
+                "publish"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Duplicate Job",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/jobs/13/duplicate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs",
+                "13",
+                "duplicate"
               ]
             }
           },
