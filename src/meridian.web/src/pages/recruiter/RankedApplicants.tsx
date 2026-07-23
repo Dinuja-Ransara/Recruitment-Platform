@@ -39,6 +39,24 @@ export function RankedApplicants() {
 
   useEffect(load, [id])
 
+  // A pool of forty is unreadable as one list. Filtering by stage is how a
+  // recruiter actually works: screen the new ones, then review the shortlist.
+  const [stageFilter, setStageFilter] = useState<'all' | 'new' | 'progressing' | 'closed'>('all')
+
+  const visible = (applicants ?? []).filter((applicant) => {
+    if (stageFilter === 'all') return true
+    if (stageFilter === 'new') return applicant.status <= 1
+    if (stageFilter === 'progressing') return applicant.status >= 2 && applicant.status <= 5
+    return applicant.status >= 6
+  })
+
+  const counts = {
+    all: applicants?.length ?? 0,
+    new: (applicants ?? []).filter((a) => a.status <= 1).length,
+    progressing: (applicants ?? []).filter((a) => a.status >= 2 && a.status <= 5).length,
+    closed: (applicants ?? []).filter((a) => a.status >= 6).length,
+  }
+
   async function changeStatus(applicationId: number, status: number) {
     setBusyId(applicationId)
     setError(null)
@@ -65,13 +83,41 @@ export function RankedApplicants() {
         </div>
       )}
 
+      {applicants !== null && applicants.length > 0 && (
+        <div className="mb-5 flex flex-wrap gap-2">
+          {(
+            [
+              ['all', 'All applicants'],
+              ['new', 'Awaiting screening'],
+              ['progressing', 'In progress'],
+              ['closed', 'Closed'],
+            ] as const
+          ).map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => setStageFilter(key)}
+              className={`rounded-[6px] border px-3 py-1.5 text-sm transition-colors ${
+                stageFilter === key
+                  ? 'border-accent bg-accent-soft font-medium text-accent'
+                  : 'border-line-strong text-ink-700 hover:border-accent'
+              }`}
+            >
+              {label}
+              <span className="tabular ml-2 text-xs text-ink-300">{counts[key]}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
       {applicants === null ? (
         <Loading />
       ) : applicants.length === 0 ? (
         <EmptyState title="No applicants yet" detail="Ranking appears once candidates apply." />
+      ) : visible.length === 0 ? (
+        <EmptyState title="Nothing at this stage" detail="Choose another filter above." />
       ) : (
         <ul className="space-y-3">
-          {applicants.map((applicant, index) => {
+          {visible.map((applicant, index) => {
             const isOpen = expanded === applicant.applicationId
             const nextStatuses = allowedTransitions[applicant.status] ?? []
 

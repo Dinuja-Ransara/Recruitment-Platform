@@ -36,6 +36,7 @@ const groups: NavGroup[] = [
       { to: '/recruiter', label: 'Overview', hint: 'Pipeline at a glance', roles: [Roles.Recruiter], end: true },
       { to: '/recruiter/jobs', label: 'Postings', hint: 'Draft, publish and close', roles: [Roles.Recruiter] },
       { to: '/recruiter/jobs/new', label: 'New posting', hint: 'Create a vacancy', roles: [Roles.Recruiter] },
+      { to: '/recruiter/analytics', label: 'Analytics', hint: 'Funnel and posting performance', roles: [Roles.Recruiter] },
     ],
   },
   {
@@ -46,6 +47,7 @@ const groups: NavGroup[] = [
     heading: 'Administration',
     items: [
       { to: '/admin', label: 'System', hint: 'Monitoring and audit', roles: [Roles.Administrator], end: true },
+      { to: '/admin/analytics', label: 'Analytics', hint: 'Funnel across all clients', roles: [Roles.Administrator] },
       { to: '/admin/organizations', label: 'Organisations', hint: 'Clients and departments', roles: [Roles.Administrator] },
     ],
   },

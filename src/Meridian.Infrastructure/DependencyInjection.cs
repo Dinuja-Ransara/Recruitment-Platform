@@ -38,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IJobService, JobService>();
         services.AddScoped<IApplicationService, ApplicationService>();
+        services.AddScoped<IAnalyticsService, AnalyticsService>();
 
         // The matching engine holds no mutable state between calls, so one
         // instance serves every request. The strategies it resolves are likewise

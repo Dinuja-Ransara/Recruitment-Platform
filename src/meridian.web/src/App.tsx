@@ -16,6 +16,7 @@ import { JobForm } from './pages/recruiter/JobForm'
 
 import { ManagerShortlists } from './pages/manager/ManagerShortlists'
 import { OrganizationsPage, StaffOverview } from './pages/StaffOverview'
+import { AnalyticsPage } from './pages/AnalyticsPage'
 
 /**
  * Sends a signed-in user to the portal their role owns. A user holding several
@@ -99,6 +100,14 @@ export default function App() {
               }
             />
             <Route
+              path="/recruiter/analytics"
+              element={
+                <ProtectedRoute roles={[Roles.Recruiter]}>
+                  <AnalyticsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/recruiter/jobs"
               element={
                 <ProtectedRoute roles={[Roles.Recruiter]}>
@@ -139,6 +148,14 @@ export default function App() {
               element={
                 <ProtectedRoute roles={[Roles.Administrator]}>
                   <StaffOverview />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/analytics"
+              element={
+                <ProtectedRoute roles={[Roles.Administrator]}>
+                  <AnalyticsPage />
                 </ProtectedRoute>
               }
             />

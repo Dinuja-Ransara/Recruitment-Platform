@@ -35,10 +35,29 @@ export function ExplanationPanel({ explanation }: { explanation: MatchExplanatio
             </thead>
             <tbody>
               {explanation.factors.map((factor) => (
-                <tr key={factor.name} className="border-b border-line last:border-0 align-top">
+                <tr key={factor.name} className="border-b border-line align-top last:border-0">
                   <td className="py-2.5 pr-4 font-medium text-ink-900">{factor.name}</td>
-                  <td className="tabular py-2.5 pr-4 text-right text-ink-700">
-                    {factor.value.toFixed(3)}
+                  <td className="py-2.5 pr-4">
+                    {/* The bar makes a weak factor visible at a glance. Reading
+                        five decimals to find the one dragging a score down is
+                        exactly the work this panel exists to remove. */}
+                    <div className="flex items-center justify-end gap-2">
+                      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-surface-alt">
+                        <div
+                          className={`h-full ${
+                            factor.value >= 0.75
+                              ? 'bg-positive'
+                              : factor.value >= 0.4
+                                ? 'bg-accent'
+                                : 'bg-warning'
+                          }`}
+                          style={{ width: `${Math.min(100, factor.value * 100)}%` }}
+                        />
+                      </div>
+                      <span className="tabular w-11 text-right text-ink-700">
+                        {factor.value.toFixed(2)}
+                      </span>
+                    </div>
                   </td>
                   <td className="tabular py-2.5 pr-4 text-right text-ink-500">
                     {factor.weight.toFixed(2)}
