@@ -1,37 +1,54 @@
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
 /*
   Meridian design tokens.
 
-  The accent is sampled directly from the Meridian mark (#246DF0) so the brand
-  and the interface agree. Everything around it is deliberately institutional
-  rather than consumer: a navy-leaning ink ramp, hairline borders, modest 6px
-  corners. Data-dense screens are the primary surface, so numerals are tabular
-  and table rows stay compact.
+  The accent is sampled from the Meridian mark (#246DF0) so brand and interface
+  agree. Everything around it is deliberately restrained: a navy-leaning ink
+  ramp, hairline rules, and a tight 6px corner. The personality comes from
+  typography and from one signature element, the score dial, rather than from
+  gradients or ornament.
+
+  Instrument Sans carries headings and figures at tight tracking; JetBrains Mono
+  carries every number, so scores and counts align in columns and read as
+  measurements rather than prose.
 */
 @theme {
-  --color-ink-900: #0b1220;
-  --color-ink-700: #212c3d;
-  --color-ink-500: #586574;
-  --color-ink-300: #8b96a4;
+  --color-ink-900: #0a1120;
+  --color-ink-800: #131c2c;
+  --color-ink-700: #1f2a3c;
+  --color-ink-500: #55637a;
+  --color-ink-400: #7b8799;
+  --color-ink-300: #9aa4b4;
 
-  --color-line: #e3e7ed;
-  --color-line-strong: #cbd2db;
+  --color-line: #e4e8ee;
+  --color-line-strong: #ccd4de;
   --color-surface: #ffffff;
-  --color-surface-alt: #f5f7fa;
+  --color-surface-alt: #f6f8fb;
+  --color-surface-sunk: #eef2f7;
 
   --color-accent: #246df0;
-  --color-accent-hover: #1a5ad4;
+  --color-accent-hover: #1a57c9;
   --color-accent-soft: #eaf1fe;
+  --color-accent-line: #bcd3fb;
 
-  --color-positive: #15803d;
+  --color-positive: #0f8a5f;
+  --color-positive-soft: #e6f5ef;
   --color-warning: #b45309;
-  --color-danger: #b91c1c;
+  --color-warning-soft: #fdf3e7;
+  --color-danger: #c02626;
+  --color-danger-soft: #fdecec;
 
   --radius-card: 6px;
 
-  --font-sans: "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-mono: "Cascadia Code", "Consolas", monospace;
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+
+  /* Elevation is used sparingly. Two steps only, so a raised surface means
+     something rather than being decoration. */
+  --shadow-card: 0 1px 2px rgb(10 17 32 / 0.04), 0 1px 3px rgb(10 17 32 / 0.03);
+  --shadow-lift: 0 4px 6px -2px rgb(10 17 32 / 0.05), 0 12px 24px -8px rgb(10 17 32 / 0.12);
 }
 
 html,
@@ -44,10 +61,89 @@ body {
   background-color: var(--color-surface-alt);
   color: var(--color-ink-900);
   font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Figures line up in columns across every table and metric tile. */
+/* Headings are set tight. At default tracking a grotesk this size reads soft. */
+h1,
+h2,
+h3 {
+  letter-spacing: -0.021em;
+}
+
+/* Every figure in the product is monospaced and tabular, so scores, counts and
+   dates line up down a column and can be compared without reading them. */
 .tabular {
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* --- Motion -------------------------------------------------------------- */
+/* Animation is used to show where something came from, never for ornament.    */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes expand {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-rise {
+  animation: rise 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-expand {
+  animation: expand 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* A list staggers its entry so the eye follows the order rather than being
+   presented with everything at once. Capped, because a long list should not
+   keep the reader waiting. */
+.stagger > * {
+  animation: rise 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 40ms; }
+.stagger > *:nth-child(3) { animation-delay: 80ms; }
+.stagger > *:nth-child(4) { animation-delay: 120ms; }
+.stagger > *:nth-child(5) { animation-delay: 160ms; }
+.stagger > *:nth-child(6) { animation-delay: 200ms; }
+.stagger > *:nth-child(n + 7) { animation-delay: 240ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-expand,
+  .stagger > * {
+    animation: none;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus is always visible and always the same shape, so keyboard users are
+   never guessing where they are. */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }

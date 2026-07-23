@@ -9,7 +9,8 @@ import {
   type Paged,
 } from '../../lib/types'
 import { PageHeading } from '../../components/AppShell'
-import { Badge, Button, Card, EmptyState, ErrorNote, Loading, ScoreBar } from '../../components/ui'
+import { Badge, Button, Card, EmptyState, ErrorNote, Loading } from '../../components/ui'
+import { RankBadge, ScoreDial } from '../../components/ScoreDial'
 import { ExplanationPanel } from '../../components/ExplanationPanel'
 
 /**
@@ -109,8 +110,8 @@ export function ManagerShortlists() {
               detail="Candidates appear here once a recruiter advances them past screening."
             />
           ) : (
-            <ul className="space-y-3">
-              {shortlisted.map((applicant) => {
+            <ul className="stagger space-y-3">
+              {shortlisted.map((applicant, position) => {
                 const isOpen = expanded === applicant.applicationId
                 const next = allowedTransitions[applicant.status] ?? []
 
@@ -118,35 +119,38 @@ export function ManagerShortlists() {
                   <li key={applicant.applicationId}>
                     <Card>
                       <div className="flex flex-wrap items-start justify-between gap-4">
-                        <div className="min-w-0">
+                        <div className="flex min-w-0 gap-4">
+                          <RankBadge position={position + 1} />
+                          <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="font-medium text-ink-900">{applicant.fullName}</h3>
+                            <h3 className="font-semibold text-ink-900">{applicant.fullName}</h3>
                             <Badge tone="accent">{appStatusLabel[applicant.status]}</Badge>
                             {applicant.explanation?.hasMandatoryGap && (
                               <Badge tone="warning">Mandatory gap</Badge>
                             )}
                           </div>
                           <p className="mt-0.5 text-sm text-ink-500">{applicant.headline}</p>
-                          <p className="mt-1 text-xs text-ink-300">
+                          <p className="mt-1 text-xs text-ink-400">
                             {applicant.city}, {applicant.country} &middot;{' '}
-                            {applicant.yearsOfExperience} years &middot;{' '}
-                            {educationLabel[applicant.highestEducation]}
+                            <span className="tabular">{applicant.yearsOfExperience}</span> years
+                            &middot; {educationLabel[applicant.highestEducation]}
                           </p>
+                          </div>
                         </div>
 
-                        <div className="flex flex-col items-end gap-2">
+                        <div className="flex items-center gap-3">
                           {applicant.matchScore != null && (
-                            <ScoreBar
+                            <ScoreDial
                               score={applicant.matchScore}
                               capped={applicant.explanation?.hasMandatoryGap}
                             />
                           )}
                           <Button
                             size="sm"
-                            variant="secondary"
+                            variant={isOpen ? 'secondary' : 'ghost'}
                             onClick={() => setExpanded(isOpen ? null : applicant.applicationId)}
                           >
-                            {isOpen ? 'Hide reasoning' : 'Why this score'}
+                            {isOpen ? 'Hide' : 'Why this score'}
                           </Button>
                         </div>
                       </div>

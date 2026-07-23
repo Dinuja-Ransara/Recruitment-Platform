@@ -11,7 +11,7 @@ import {
   type SystemHealth,
 } from '../lib/types'
 import { PageHeading } from '../components/AppShell'
-import { Badge, Card, EmptyState, Loading } from '../components/ui'
+import { Badge, Card, CountUp, EmptyState, Loading } from '../components/ui'
 
 /**
  * Overview for recruiting staff and administrators.
@@ -49,7 +49,7 @@ export function StaffOverview() {
         subtitle={user?.organizationName ?? undefined}
       />
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="stagger mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Metric label="Postings" value={jobs?.length ?? 0} />
         <Metric label="Published" value={published.length} />
         <Metric label="Applicants" value={totalApplicants} />
@@ -140,7 +140,9 @@ export function StaffOverview() {
 function Metric({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-[6px] border border-line bg-surface px-4 py-3">
-      <p className="tabular text-2xl font-semibold text-ink-900">{value}</p>
+      <p className="tabular text-2xl font-semibold text-ink-900">
+        <CountUp value={value} />
+      </p>
       <p className="mt-0.5 text-xs text-ink-500">{label}</p>
     </div>
   )

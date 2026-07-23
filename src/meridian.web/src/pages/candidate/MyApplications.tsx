@@ -8,7 +8,8 @@ import {
   type ApplicationSummary,
 } from '../../lib/types'
 import { PageHeading } from '../../components/AppShell'
-import { Badge, Button, Card, EmptyState, ErrorNote, Loading, ScoreBar } from '../../components/ui'
+import { Badge, Button, Card, EmptyState, ErrorNote, Loading } from '../../components/ui'
+import { ScoreDial } from '../../components/ScoreDial'
 import { ExplanationPanel } from '../../components/ExplanationPanel'
 
 function statusTone(status: number) {
@@ -34,12 +35,12 @@ export function MyApplications() {
       ) : applications.length === 0 ? (
         <EmptyState title="Nothing submitted yet" detail="Applications appear here once you apply." />
       ) : (
-        <ul className="space-y-3">
+        <ul className="stagger space-y-3">
           {applications.map((app) => (
             <li key={app.id}>
               <Link
                 to={`/candidate/applications/${app.id}`}
-                className="block rounded-[6px] border border-line bg-surface p-5 transition-colors hover:border-accent"
+                className="block rounded-[6px] border border-line bg-surface p-5 shadow-[var(--shadow-card)] transition-all hover:border-line-strong hover:shadow-[var(--shadow-lift)]"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
@@ -51,10 +52,12 @@ export function MyApplications() {
                       <p className="mt-1.5 text-xs text-ink-500">{app.matchSummary}</p>
                     )}
                   </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <Badge tone={statusTone(app.status)}>{appStatusLabel[app.status]}</Badge>
-                    {app.matchScore != null && <ScoreBar score={app.matchScore} />}
-                    <span className="text-xs text-ink-300">{formatDate(app.submittedAt)}</span>
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col items-end gap-1.5">
+                      <Badge tone={statusTone(app.status)}>{appStatusLabel[app.status]}</Badge>
+                      <span className="text-xs text-ink-400">{formatDate(app.submittedAt)}</span>
+                    </div>
+                    {app.matchScore != null && <ScoreDial score={app.matchScore} />}
                   </div>
                 </div>
               </Link>

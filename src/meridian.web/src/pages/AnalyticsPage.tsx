@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../lib/api'
 import { PageHeading } from '../components/AppShell'
-import { Card, EmptyState, Loading } from '../components/ui'
+import { Card, CountUp, EmptyState, Loading } from '../components/ui'
 
 interface FunnelStage {
   status: number
@@ -59,7 +59,7 @@ export function AnalyticsPage() {
         subtitle="Every figure is derived from the application pipeline rather than stored, so it cannot disagree with the lists beneath it."
       />
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="stagger mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Metric label="Published postings" value={data.publishedPostings} note={`${data.draftPostings} draft`} />
         <Metric label="Applications" value={data.totalApplications} note={`${data.activeApplications} still active`} />
         <Metric label="Average match" value={data.averageMatchScore} note="across scored applications" />
@@ -204,7 +204,9 @@ export function AnalyticsPage() {
 function Metric({ label, value, note }: { label: string; value: number | string; note?: string }) {
   return (
     <div className="rounded-[6px] border border-line bg-surface px-4 py-3">
-      <p className="tabular text-2xl font-semibold text-ink-900">{value}</p>
+      <p className="tabular text-2xl font-semibold text-ink-900">
+        {typeof value === 'number' ? <CountUp value={value} decimals={value % 1 === 0 ? 0 : 1} /> : value}
+      </p>
       <p className="mt-0.5 text-xs font-medium text-ink-700">{label}</p>
       {note && <p className="text-xs text-ink-300">{note}</p>}
     </div>

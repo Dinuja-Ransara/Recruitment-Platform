@@ -10,7 +10,8 @@ import {
   type JobRecommendation,
 } from '../../lib/types'
 import { PageHeading } from '../../components/AppShell'
-import { Badge, Card, EmptyState, Loading, ScoreBar } from '../../components/ui'
+import { Badge, Card, CountUp, EmptyState, Loading } from '../../components/ui'
+import { ScoreDial } from '../../components/ScoreDial'
 
 export function CandidateOverview() {
   const { user } = useAuth()
@@ -49,7 +50,7 @@ export function CandidateOverview() {
                 detail="Recommendations appear once recruiters publish roles."
               />
             ) : (
-              <ul className="divide-y divide-line">
+              <ul className="stagger divide-y divide-line">
                 {recommendations.map((rec) => (
                   <li key={rec.jobPostingId} className="py-3 first:pt-0 last:pb-0">
                     <div className="flex flex-wrap items-start justify-between gap-3">
@@ -66,12 +67,12 @@ export function CandidateOverview() {
                         </p>
                         <p className="mt-1 text-xs text-ink-500">{rec.explanation.summary}</p>
                       </div>
-                      <div className="flex flex-col items-end gap-1.5">
-                        <ScoreBar
+                      <div className="flex items-center gap-3">
+                        {rec.alreadyApplied && <Badge tone="accent">Applied</Badge>}
+                        <ScoreDial
                           score={rec.explanation.score}
                           capped={rec.explanation.hasMandatoryGap}
                         />
-                        {rec.alreadyApplied && <Badge tone="accent">Applied</Badge>}
                       </div>
                     </div>
                   </li>
@@ -121,7 +122,9 @@ export function CandidateOverview() {
 function Metric({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-[6px] border border-line bg-surface-alt px-3 py-2.5">
-      <p className="tabular text-xl font-semibold text-ink-900">{value}</p>
+      <p className="tabular text-xl font-semibold text-ink-900">
+        <CountUp value={value} />
+      </p>
       <p className="mt-0.5 text-xs text-ink-500">{label}</p>
     </div>
   )
