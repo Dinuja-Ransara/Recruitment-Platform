@@ -4,34 +4,34 @@
 /*
   Meridian design tokens.
 
-  The accent is sampled from the Meridian mark (#246DF0) so brand and interface
-  agree. Everything around it is deliberately restrained: a navy-leaning ink
-  ramp, hairline rules, and a tight 6px corner. The personality comes from
-  typography and from one signature element, the score dial, rather than from
-  gradients or ornament.
+  Namecheap-style palette: a warm, confident orange accent on a neutral
+  near-black ink ramp (rather than the earlier navy-tinted one), plenty of
+  white space, hairline rules. The personality comes from typography and
+  from one signature element, the score dial, rather than from gradients
+  or ornament.
 
   Instrument Sans carries headings and figures at tight tracking; JetBrains Mono
   carries every number, so scores and counts align in columns and read as
   measurements rather than prose.
 */
 @theme {
-  --color-ink-900: #0a1120;
-  --color-ink-800: #131c2c;
-  --color-ink-700: #1f2a3c;
-  --color-ink-500: #55637a;
-  --color-ink-400: #7b8799;
-  --color-ink-300: #9aa4b4;
+  --color-ink-900: #1a1a1a;
+  --color-ink-800: #262626;
+  --color-ink-700: #3d3d3d;
+  --color-ink-500: #6b6b6b;
+  --color-ink-400: #8a8a8a;
+  --color-ink-300: #b0b0b0;
 
-  --color-line: #e4e8ee;
-  --color-line-strong: #ccd4de;
+  --color-line: #e6e6e8;
+  --color-line-strong: #d2d2d5;
   --color-surface: #ffffff;
-  --color-surface-alt: #f6f8fb;
-  --color-surface-sunk: #eef2f7;
+  --color-surface-alt: #f7f7f8;
+  --color-surface-sunk: #f0f0f2;
 
-  --color-accent: #246df0;
-  --color-accent-hover: #1a57c9;
-  --color-accent-soft: #eaf1fe;
-  --color-accent-line: #bcd3fb;
+  --color-accent: #ff5000;
+  --color-accent-hover: #e04600;
+  --color-accent-soft: #fff1e8;
+  --color-accent-line: #ffc9a8;
 
   --color-positive: #0f8a5f;
   --color-positive-soft: #e6f5ef;
@@ -40,15 +40,15 @@
   --color-danger: #c02626;
   --color-danger-soft: #fdecec;
 
-  --radius-card: 6px;
+  --radius-card: 10px;
 
   --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
 
   /* Elevation is used sparingly. Two steps only, so a raised surface means
      something rather than being decoration. */
-  --shadow-card: 0 1px 2px rgb(10 17 32 / 0.04), 0 1px 3px rgb(10 17 32 / 0.03);
-  --shadow-lift: 0 4px 6px -2px rgb(10 17 32 / 0.05), 0 12px 24px -8px rgb(10 17 32 / 0.12);
+  --shadow-card: 0 1px 2px rgb(26 26 26 / 0.04), 0 1px 3px rgb(26 26 26 / 0.03);
+  --shadow-lift: 0 4px 6px -2px rgb(26 26 26 / 0.05), 0 12px 24px -8px rgb(26 26 26 / 0.12);
 }
 
 html,
