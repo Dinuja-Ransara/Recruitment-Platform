@@ -196,7 +196,89 @@ public class DatabaseSeeder
             IsOpenToRemote = true
         };
 
-        _context.Users.AddRange(administrator, recruiter, hiringManager, candidate);
+        var candidate2 = BuildUser("nuwan.perera@meridian.example.com", "Nuwan Perera", roles[Role.Candidate]);
+        candidate2.CandidateProfile = new CandidateProfile
+        {
+            Headline = "Mid-level .NET backend engineer",
+            Summary = "Nuwan is a backend-focused software engineer with four years of experience building APIs and business applications using C#, ASP.NET Core and SQL Server. He has implemented REST endpoints, background jobs and third-party integrations in systems used by internal operations teams. He is comfortable with Entity Framework Core, unit testing and CI/CD practices, and works well with frontend developers to refine API contracts and performance.",
+            City = "Colombo",
+            Country = "Sri Lanka",
+            YearsOfExperience = 4,
+            HighestEducation = EducationLevel.Bachelors,
+            IsOpenToRemote = true
+        };
+
+        var candidate3 = BuildUser("sanduni.jayasinghe@meridian.example.com", "Sanduni Jayasinghe", roles[Role.Candidate]);
+        candidate3.CandidateProfile = new CandidateProfile
+        {
+            Headline = "Senior full-stack engineer, .NET and React",
+            Summary = "Sanduni has seven years of experience building enterprise web applications with .NET on the backend and React on the frontend. She has designed domain models, optimized reporting queries and introduced automated testing practices for customer-facing systems in logistics and finance. She regularly leads code reviews, mentors junior developers and collaborates with product stakeholders to deliver maintainable features on schedule.",
+            City = "Singapore",
+            Country = "Singapore",
+            YearsOfExperience = 7,
+            HighestEducation = EducationLevel.Bachelors,
+            IsOpenToRemote = true
+        };
+
+        var candidate4 = BuildUser("isuru.fernando@meridian.example.com", "Isuru Fernando", roles[Role.Candidate]);
+        candidate4.CandidateProfile = new CandidateProfile
+        {
+            Headline = "Backend engineer, Java and Spring Boot",
+            Summary = "Isuru is a backend engineer with three years of experience building REST APIs using Java, Spring Boot and PostgreSQL. He has worked on authentication flows, asynchronous processing and microservice-based systems, and follows clean coding and testing practices. Although his recent work is mainly in Java rather than C#, he understands core backend engineering concepts and can adapt quickly to new technologies.",
+            City = "London",
+            Country = "United Kingdom",
+            YearsOfExperience = 3,
+            HighestEducation = EducationLevel.Bachelors,
+            IsOpenToRemote = true
+        };
+
+        var candidate5 = BuildUser("tharushi.madushani@meridian.example.com", "Tharushi Madushani", roles[Role.Candidate]);
+        candidate5.CandidateProfile = new CandidateProfile
+        {
+            Headline = "Junior .NET developer",
+            Summary = "Tharushi is a junior developer with one year of experience contributing to internal tools built with ASP.NET Core MVC and SQL Server. She has worked on CRUD features, validation rules and simple reporting pages, and is growing her confidence with Entity Framework, LINQ and REST APIs. She performs well under guidance from senior engineers and is eager to grow into a more advanced backend development role.",
+            City = "Colombo",
+            Country = "Sri Lanka",
+            YearsOfExperience = 1,
+            HighestEducation = EducationLevel.Bachelors,
+            IsOpenToRemote = false
+        };
+
+        var candidate6 = BuildUser("arjun.mehta@meridian.example.com", "Arjun Mehta", roles[Role.Candidate]);
+        candidate6.CandidateProfile = new CandidateProfile
+        {
+            Headline = "Principal software architect, Java microservices",
+            Summary = "Arjun is a principal software architect with twelve years of experience designing and leading distributed systems in finance and e-commerce environments. His core expertise is in Java, Spring Cloud, Kubernetes and event-driven microservice platforms, and he has led engineering teams across multiple regions. He is strong in architecture, stakeholder communication and technical leadership, but his hands-on work is primarily in the Java ecosystem rather than C# and ASP.NET Core.",
+            City = "Singapore",
+            Country = "Singapore",
+            YearsOfExperience = 12,
+            HighestEducation = EducationLevel.Masters,
+            IsOpenToRemote = true
+        };
+
+        var candidate7 = BuildUser("dilani.karunaratne@meridian.example.com", "Dilani Karunaratne", roles[Role.Candidate]);
+        candidate7.CandidateProfile = new CandidateProfile
+        {
+            Headline = "Assistant manager, retail operations",
+            Summary = "Dilani has six years of experience managing day-to-day retail operations, including supervising staff, coordinating inventory checks, preparing sales reports and resolving customer escalations. She is organized, dependable and experienced in operational administration, but she does not have a software engineering background or hands-on experience with programming, databases or application development. Her profile is intentionally included as a poor fit for technical roles in the demonstration dataset.",
+            City = "Colombo",
+            Country = "Sri Lanka",
+            YearsOfExperience = 6,
+            HighestEducation = EducationLevel.Bachelors,
+            IsOpenToRemote = false
+        };
+
+        _context.Users.AddRange(
+    administrator,
+    recruiter,
+    hiringManager,
+    candidate,
+    candidate2,
+    candidate3,
+    candidate4,
+    candidate5,
+    candidate6,
+    candidate7);
         await _context.SaveChangesAsync(ct);
     }
 
