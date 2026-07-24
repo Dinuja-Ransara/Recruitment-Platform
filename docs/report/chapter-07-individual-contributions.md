@@ -55,6 +55,12 @@ construction.
 
 ## 7.3 Dinuja Ransara — `[index number]`
 
+> **Authorship note.** `docs/testing/usability.md` was written by Dinuja, who
+> ran the usability session and recorded the findings. It was committed to
+> the repository directly rather than through his own branch for workflow
+> reasons on submission day, so it does not appear under his name in the
+> commit history in Section 7.5. This note exists so the two records agree.
+
 **Responsibilities undertaken.** `[...]`
 
 **Features implemented.** `[...]`
