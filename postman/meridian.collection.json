@@ -17,8 +17,11 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "let res = {};\r",
+                  "try { res = pm.response.json(); } catch (e) { res = {}; }\r",
                   "pm.test(\"Login succeeds\", () => pm.response.to.have.status(200));\r",
-                  "pm.environment.set(\"token\", pm.response.json().accessToken);"
+                  "if (res.token) pm.environment.set(\"token\", res.token);\r",
+                  "if (res.accessToken) pm.environment.set(\"token\", res.accessToken);"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -32,6 +35,81 @@
             "body": {
               "mode": "raw",
               "raw": "{\r\n  \"email\": \"admin@meridian.example.com\",\r\n  \"password\": \"Meridian#2026\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"candidate9@test.com\",\r\n  \"password\": \"Password124!\",\r\n  \"fullName\": \"Saman Candidate\",\r\n  \"phoneNumber\": \"0771774563\",\r\n  \"headline\": \"Software Engineer\",\r\n  \"city\": \"Colombo 05\",\r\n  \"country\": \"Sri Lanka\",\r\n  \"yearsOfExperience\": 2\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register/candidate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                "candidate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Manager",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let res = {};\r",
+                  "try { res = pm.response.json(); } catch (e) { res = {}; }\r",
+                  "pm.test(\"Login succeeds\", () => pm.response.to.have.status(200));\r",
+                  "if (res.token) pm.environment.set(\"token\", res.token);\r",
+                  "if (res.accessToken) pm.environment.set(\"token\", res.accessToken);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"manager@meridian.example.com\",\r\n  \"password\": \"Meridian#2026\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -78,52 +156,14 @@
             }
           ],
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
               "raw": "{\r\n  \"email\": \"recruiter@meridian.example.com\",\r\n  \"password\": \"Meridian#2026\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Login - Manager",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Login succeeds\", () => pm.response.to.have.status(200));\r",
-                  "pm.environment.set(\"token\", pm.response.json().accessToken);"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"email\": \"manager@meridian.example.com\",\r\n  \"password\": \"Meridian#2026\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -150,18 +190,11 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Login succeeds\", () => pm.response.to.have.status(200));\r",
-                  "pm.environment.set(\"token\", pm.response.json().accessToken);\r",
-                  "\r",
-                  "const res = pm.response.json();\r",
-                  "\r",
-                  "if (res.token) {\r",
-                  "  pm.collectionVariables.set(\"candidateToken\", res.token);\r",
-                  "}\r",
-                  "\r",
-                  "if (res.accessToken) {\r",
-                  "  pm.collectionVariables.set(\"candidateToken\", res.accessToken);\r",
-                  "}"
+                  "let res = {};\r",
+                  "try { res = pm.response.json(); } catch (e) { res = {}; }\r",
+                  "if (res.token) pm.collectionVariables.set(\"candidateToken\", res.token);\r",
+                  "if (res.accessToken) pm.collectionVariables.set(\"candidateToken\", res.accessToken);\r",
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -170,11 +203,14 @@
             }
           ],
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"email\": \"candidate@meridian.example.com\",\r\n  \"password\": \"Meridian#2026\"\r\n}",
+              "raw": "{ \r\n    \"email\": \"candidate4@test.com\", \r\n    \"password\": \"Password123!\" \r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -195,36 +231,18 @@
           "response": []
         },
         {
-          "name": "register",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"fullName\": \"Test 2 Candidate\",\r\n  \"email\": \"test2.candidate2@meridian.example.com\",\r\n  \"password\": \"Meridian#2026\",\r\n  \"city\": \"Colombo 02\",\r\n  \"country\": \"Sri Lanka\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/register/candidate",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "register",
-                "candidate"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "/me",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
@@ -248,6 +266,9 @@
         {
           "name": "Search Jobs",
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
             "url": {
@@ -265,6 +286,16 @@
         {
           "name": "My Postings",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
@@ -281,18 +312,27 @@
           "response": []
         },
         {
-          "name": "Get Job",
+          "name": "List Organizations (recruiter)",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/jobs/1",
+              "raw": "{{baseUrl}}/organizations",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "jobs",
-                "1"
+                "organizations"
               ]
             }
           },
@@ -305,7 +345,10 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.environment.set(\"jobId\", pm.response.json().id);"
+                  "let res = {};\r",
+                  "try { res = pm.response.json(); } catch (e) { res = {}; }\r",
+                  "if (res.id) pm.collectionVariables.set(\"jobId\", res.id);\r",
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -314,11 +357,21 @@
             }
           ],
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"title\": \"Senior Backend Engineer\",\r\n  \"description\": \"Build and maintain the recruitment platform APIs.\",\r\n  \"organizationId\": 1,\r\n  \"employmentType\": 0,\r\n  \"seniority\": 2,\r\n  \"workMode\": 1,\r\n  \"minYearsExperience\": 3,\r\n  \"city\": \"Colombo\",\r\n  \"country\": \"Sri Lanka\"\r\n}",
+              "raw": "{\r\n  \"title\": \"Backend Developer(Java)\",\r\n  \"description\": \"Build and maintain backend services.\",\r\n  \"responsibilities\": \"API design, database work\",\r\n  \"organizationId\": 1,\r\n  \"city\": \"Colombo 03\",\r\n  \"country\": \"Sri Lanka\",\r\n  \"workMode\": 0,\r\n  \"employmentType\": 0,\r\n  \"seniority\": 1,\r\n  \"minYearsExperience\": 1,\r\n  \"requiredEducation\": 1,\r\n  \"salaryMin\": 100000,\r\n  \"salaryMax\": 200000,\r\n  \"currency\": \"LKR\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -338,8 +391,39 @@
           "response": []
         },
         {
+          "name": "Get Job",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs/{{jobId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "jobs",
+                "{{jobId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Publish Job",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
@@ -352,13 +436,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/jobs/13/publish",
+              "raw": "{{baseUrl}}/jobs/{{jobId}}/publish",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "jobs",
-                "13",
+                "{{jobId}}",
                 "publish"
               ]
             }
@@ -368,6 +452,16 @@
         {
           "name": "Duplicate Job",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
@@ -380,13 +474,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/jobs/13/duplicate",
+              "raw": "{{baseUrl}}/jobs/{{jobId}}/duplicate",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "jobs",
-                "13",
+                "{{jobId}}",
                 "duplicate"
               ]
             }
@@ -400,12 +494,37 @@
       "item": [
         {
           "name": "Apply",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let res = {};\r",
+                  "try { res = pm.response.json(); } catch (e) { res = {}; }\r",
+                  "if (res.id) pm.collectionVariables.set(\"applicationId\", res.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"jobPostingId\": 6,\r\n  \"coverLetter\": \"I am excited to apply for this role given my background.\"\r\n}",
+              "raw": "{\r\n  \"jobPostingId\": {{jobId}},\r\n  \"coverLetter\": \"I am excited to apply for this role given my background.\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -426,7 +545,30 @@
         },
         {
           "name": "My Applications",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
@@ -444,17 +586,40 @@
         },
         {
           "name": "Get Application",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/applications/61",
+              "raw": "{{baseUrl}}/applications/{{applicationId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "applications",
-                "61"
+                "{{applicationId}}"
               ]
             }
           },
@@ -462,18 +627,41 @@
         },
         {
           "name": "Ranked Applicants",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/applications/job/15/ranked",
+              "raw": "{{baseUrl}}/applications/job/{{jobId}}/ranked",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "applications",
                 "job",
-                "15",
+                "{{jobId}}",
                 "ranked"
               ]
             }
@@ -482,12 +670,35 @@
         },
         {
           "name": "Change Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"status\": 1,\r\n  \"note\": \"Moved to interview stage after initial screening.\"\r\n}",
+              "raw": "{\r\n  \"status\": 1,\r\n  \"note\": \"Moved to review\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -495,13 +706,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/applications/61/status",
+              "raw": "{{baseUrl}}/applications/{{applicationId}}/status",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "applications",
-                "61",
+                "{{applicationId}}",
                 "status"
               ]
             }
@@ -510,7 +721,30 @@
         },
         {
           "name": "Withdraw Application",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
@@ -523,13 +757,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/applications/61/withdraw",
+              "raw": "{{baseUrl}}/applications/{{applicationId}}/withdraw",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "applications",
-                "61",
+                "{{applicationId}}",
                 "withdraw"
               ]
             }
@@ -538,7 +772,30 @@
         },
         {
           "name": "Recommendations",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
@@ -553,6 +810,32 @@
             }
           },
           "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "let res = {};\r",
+              "try { res = pm.response.json(); } catch (e) { res = {}; }\r",
+              "if (res.id) pm.collectionVariables.set(\"applicationId\", res.id);"
+            ]
+          }
         }
       ]
     },
@@ -654,18 +937,7 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Login succeeds\", () => pm.response.to.have.status(200));\r",
-                  "pm.environment.set(\"token\", pm.response.json().accessToken);\r",
-                  "\r",
-                  "const res = pm.response.json();\r",
-                  "\r",
-                  "if (res.token) {\r",
-                  "  pm.collectionVariables.set(\"candidateToken\", res.token);\r",
-                  "}\r",
-                  "\r",
-                  "if (res.accessToken) {\r",
-                  "  pm.collectionVariables.set(\"candidateToken\", res.accessToken);\r",
-                  "}"
+                  "pm.test(\"Wrong password is refused\", () => pm.response.to.have.status(401));"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -791,6 +1063,14 @@
     },
     {
       "key": "recruiterToken",
+      "value": ""
+    },
+    {
+      "key": "applicationId",
+      "value": ""
+    },
+    {
+      "key": "jobId",
       "value": ""
     }
   ]
