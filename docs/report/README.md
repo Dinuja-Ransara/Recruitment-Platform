@@ -15,9 +15,11 @@ Seven chapters, written to the structure the coursework guideline mandates.
 
 ## Before submission
 
-1. **Complete Chapter 7.** Every `[...]` placeholder and every index number must
-   be filled in by the member concerned. Each paragraph must match that member's
-   commits and what they demonstrate in the video.
+1. **Complete Chapter 7.** Responsibilities, features and testing are already
+   filled in factually. Only "Challenges encountered" and "Lessons learned"
+   remain, six `[...]` blanks across Ashan, Dinuja and Sewmin, one or two
+   sentences each, to be written by the member concerned in their own words.
+   Also add every index number.
 2. **Insert the figures.** Chapters 3 and 6 reference Figures 1 to 22. Diagrams
    come from `docs/diagrams/`, screenshots from `docs/testing/screenshots/`.
 3. **Paste the OneDrive source code link into Section 7.6.** Omitting it results
@@ -40,7 +42,8 @@ Run `python docs/report/wordcount.py` to check the total against the 4,000 word
 ceiling. References and appendices are excluded by the guideline; tables and body
 text are not.
 
-Chapters 1 to 6 currently occupy **3,778 words**, leaving roughly **220 words**
-for Chapter 7 once the contribution placeholders are completed. That is about 55
-words per member. If more room is needed, Section 5.3 and Section 4.6 are the
-least dense and can be shortened without losing an argument.
+All seven chapters, with Chapter 7's factual fields already filled in, currently
+occupy **3,935 words**, leaving **65 words** of headroom for the six remaining
+"Challenges encountered" / "Lessons learned" blanks, about 10 words each. If
+more room is needed, Section 5.3 and Section 4.6 are the least dense and can be
+shortened without losing an argument.

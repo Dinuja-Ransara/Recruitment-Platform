@@ -44,27 +44,24 @@ shape must not prevent a response; the numeric score is stored separately.
 
 ## 5.3 Security mechanisms
 
-Passwords are hashed using BCrypt at work factor twelve, chosen over a
-general-purpose hash because it is deliberately slow and salts automatically,
-defeating both precomputed tables and the parallel brute force that makes fast
-hashes unsuitable for passwords.
+Passwords are hashed with BCrypt at work factor twelve, chosen over a
+general-purpose hash for being deliberately slow and self-salting, defeating
+precomputed tables and parallel brute force.
 
 Authentication issues a signed JSON Web Token carrying identity and every role
-held, so authorisation is evaluated without a database round trip. It is signed
-rather than encrypted, so no confidential value is placed within it. Clock skew
-tolerance was set to zero, the customary five-minute allowance being misleading in
-a demonstration.
+held, so authorisation needs no database round trip. It is signed, not
+encrypted, so nothing confidential sits inside it, and clock skew tolerance is
+zero rather than the customary five minutes.
 
-Authorisation is expressed as named policies rather than repeated role strings,
-and enforcement is layered: the interface establishes that a caller holds the
-recruiter role, then the service verifies the posting belongs to the caller's own
-organisation, so one client's recruiter cannot modify another client's vacancy.
+Authorisation uses named policies rather than repeated role strings, and
+enforcement is layered: the interface confirms the caller holds the recruiter
+role, then the service checks the posting belongs to the caller's own
+organisation.
 
-Two disclosure decisions were deliberate. Authentication failure returns an
-identical message whether the account is absent or the password wrong, so the
-endpoint cannot enumerate addresses. An unpublished posting, or another user's
-application, returns "not found" rather than "forbidden", so identifiers cannot be
-probed for existence.
+Two disclosure decisions were deliberate. A failed login returns an identical
+message whether the account is absent or the password wrong, so accounts
+cannot be enumerated. An unpublished posting, or another user's application,
+returns "not found" rather than "forbidden", so identifiers cannot be probed.
 
 Authentication attempts, registrations and entity modifications are written to an
 append-only audit trail retaining the acting user and originating address.

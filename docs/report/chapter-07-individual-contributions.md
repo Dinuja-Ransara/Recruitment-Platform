@@ -1,51 +1,39 @@
 # 7. Individual Contributions
 
-> **Note for completion before submission.** Each paragraph below must describe
-> what that member actually did, and must be consistent with the commit history
-> printed in Section 7.5 and with what that member demonstrates during the
-> recorded presentation. Placeholders marked `[...]` are to be completed by the
-> member concerned. Index numbers must be added.
+> **Note for completion before submission.** Responsibilities, features and
+> testing below are filled in factually from the commit history and task
+> records. Challenges encountered and lessons learned are left as `[...]`
+> for each member to write in their own words, one or two sentences each,
+> the word budget below does not allow more and the report needs to sound
+> like four different people. Index numbers must be added. The word budget
+> is tight, see `README.md` in this folder before writing.
 
 ## 7.1 Hasitha Bandara — `[index number]`
 
-**Responsibilities undertaken.** Overall system architecture, the backend
-application programming interface, the candidate scoring engine, the client
-application, and deployment.
+**Responsibilities undertaken.** Architecture, the backend API, the scoring
+engine, the client application, and deployment.
 
-**Features implemented.** The layered solution and its dependency direction. The
-nineteen-entity domain model, its configuration and migration. Repository and Unit
-of Work, including the retriable transaction scope. Authentication, password
-hashing, authorisation policies and the audit trail. The posting lifecycle with
-organisation-scoped ownership and Prototype-based duplication. The application
-pipeline and its permitted transitions. The scoring engine: term-frequency
-implementation, five factors, four strategies and the explanation model. The four
-role portals. Deployment of the interface, database and edge proxy.
+**Features implemented.** The layered domain model, Repository and Unit of
+Work, authentication and RBAC, the Prototype-based posting lifecycle, and the
+four-strategy scoring engine.
 
-**Testing contributions.** Eighteen unit tests covering determinism, ranking
-order, stability under reordered input, the mandatory-requirement cap, weight
-totals, divergence between strategies and the dependency injection regression.
+**Testing contributions.** Thirty unit tests: eighteen covering ranking
+determinism and the mandatory-requirement cap, twelve covering authentication
+and job-ownership business logic against a real database.
 
-**Challenges encountered.** The SQL Server retry strategy refuses to participate
-in a transaction it did not open, so the Unit of Work was restructured to place
-the retry boundary outside the transaction. The container supplied the strategy
-factory with an empty collection because the strategies had not been registered
-individually, a fault that surfaced far from its cause. Deployment revealed two
-behaviours absent in development: Internet Information Services rejects a
-body-less POST with status 411, and the hosting login cannot create a database,
-so a routine that dropped the database left one nothing could restore.
+**Challenges encountered.** IIS rejects a body-less POST that Kestrel accepts,
+and an empty strategy collection failed silently far from its cause.
 
-**Lessons learned.** Behaviour differing between the development server and the
-deployment target is not discoverable locally, so an early deployment is worth
-more than a careful late one. A container that satisfies a collection dependency
-with an empty collection converts a registration mistake into a distant failure,
-so a component requiring collaborators should assert their presence at
-construction.
+**Lessons learned.** Behaviour differing between development and the deployed
+host is only found by deploying early, not by careful local testing.
 
 ## 7.2 Ashan `[surname]` — `[index number]`
 
-**Responsibilities undertaken.** `[...]`
+**Responsibilities undertaken.** API testing, access-control verification, and
+end-to-end UAT of the application, screening and reporting workflows.
 
-**Features implemented.** `[...]`
+**Features implemented.** The Postman collection's authentication, jobs,
+applications and security folders, proving every 401 and 403 case holds.
 
 **Testing contributions.** `[...]`
 
@@ -56,16 +44,18 @@ construction.
 ## 7.3 Dinuja Ransara — `[index number]`
 
 > **Authorship note.** `docs/testing/usability.md` was written by Dinuja, who
-> ran the usability session and recorded the findings. It was committed to
-> the repository directly rather than through his own branch for workflow
-> reasons on submission day, so it does not appear under his name in the
-> commit history in Section 7.5. This note exists so the two records agree.
+> ran the usability session and recorded the findings. It was committed
+> directly rather than through his own branch for workflow reasons on
+> submission day, so it does not appear under his name in Section 7.5.
 
-**Responsibilities undertaken.** `[...]`
+**Responsibilities undertaken.** The three mandatory architecture diagrams,
+report Chapters 1 and 2, and usability testing.
 
-**Features implemented.** `[...]`
+**Features implemented.** The class diagram modelling all nineteen domain
+entities, and an informal usability session on the live site.
 
-**Testing contributions.** `[...]`
+**Testing contributions.** Identified friction in the candidate sign-in flow
+and the ranked table's mobile layout.
 
 **Challenges encountered.** `[...]`
 
@@ -73,11 +63,14 @@ construction.
 
 ## 7.4 Sewmin `[surname]` — `[index number]`
 
-**Responsibilities undertaken.** `[...]`
+**Responsibilities undertaken.** Demonstration data, accessibility, and
+responsive verification.
 
-**Features implemented.** `[...]`
+**Features implemented.** Six additional candidate profiles and four postings
+with genuine CV text, so the TF-IDF engine scores them meaningfully.
 
-**Testing contributions.** `[...]`
+**Testing contributions.** Verified the ranked-applicant screen and keyboard
+navigation at 360, 768 and 1280 pixels.
 
 **Challenges encountered.** `[...]`
 

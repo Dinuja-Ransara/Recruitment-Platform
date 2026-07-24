@@ -81,14 +81,18 @@ verification, each case asserting the status code returned.
 
 ## 6.5 Automated testing
 
-Eighteen unit tests cover the scoring engine, executing in under one second.
-Determinism is asserted by scoring identical inputs repeatedly. Ranking stability
-is asserted by ranking the same pool in reversed input order and requiring
-identical output, since a shortlist that reorders between refreshes would be
-unusable. The mandatory-requirement cap, divergence between strategies, summation
-of factor weights and the regression described in Section 4.4 are each covered.
+Thirty unit tests across two suites execute in under ten seconds. Eighteen cover
+the scoring engine: determinism under repeated scoring of identical inputs,
+ranking stability under reversed input order, the mandatory-requirement cap,
+divergence between strategies, summation of factor weights, and the regression
+described in Section 4.4. Twelve more, run against a real SQLite-backed
+database rather than mocks, cover authentication and business logic directly:
+login succeeding and failing correctly, the wrong-password and unknown-email
+cases returning an identical message, deactivated accounts being blocked,
+candidate registration, and the job-posting ownership rule from Section 6.4,
+that creation does not check organisation ownership but every later action does.
 
-> **Figure 19.** Test run output showing eighteen passing tests.
+> **Figure 19.** Test run output showing all thirty tests passing.
 
 ## 6.6 Database implementation
 
