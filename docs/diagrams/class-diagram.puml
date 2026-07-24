@@ -1,0 +1,77 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class User {
+  + Id : int
+}
+class Role {
+  + Id : int
+}
+class UserRole {
+  + Id : int
+}
+class CandidateProfile {
+  + Id : int
+}
+class Resume {
+  + Id : int
+}
+class JobPosting {
+  + Id : int
+  + Clone()
+}
+class JobApplication {
+  + Id : int
+}
+class ApplicationEvent {
+  + Id : int
+}
+class Evaluation {
+  + Id : int
+}
+class InterviewFeedback {
+  + Id : int
+}
+class JobRequiredSkill {
+  + Id : int
+}
+class ResumeSkill {
+  + Id : int
+}
+class SkillAlias {
+  + Id : int
+}
+class Skill {
+  + Id : int
+}
+class Organization {
+  + Id : int
+}
+class Interview {
+  + Id : int
+}
+class Notification {
+  + Id : int
+}
+class AuditLog {
+  + Id : int
+}
+
+' Core Relationships
+User "1" -- "*" UserRole
+Role "1" -- "*" UserRole
+User "1" -- "1" CandidateProfile
+CandidateProfile "1" -- "*" Resume
+JobPosting "1" -- "*" JobApplication
+
+' Requirement D: Skill join tables
+Resume "1" -- "*" ResumeSkill
+ResumeSkill "*" -- "1" Skill
+JobPosting "1" -- "*" JobRequiredSkill
+JobRequiredSkill "*" -- "1" Skill
+
+' Note: You will need to add the specific relationship lines for Organization, 
+' Interview, Notification, and AuditLog based on your project's Configuration files 
+' in src/Meridian.Infrastructure/Persistence/Configurations/ as requested by the brief.
+@enduml
