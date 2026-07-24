@@ -69,6 +69,33 @@ export const api = {
   put: <T>(path: string, payload: unknown) =>
     request<T>(path, { method: 'PUT', body: JSON.stringify(payload) }),
   delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
+
+  /**
+   * Multipart upload, used for resumes. Cannot go through `request`, which
+   * always sets `Content-Type: application/json` and JSON-encodes the body;
+   * a browser has to set the multipart boundary itself, so no Content-Type
+   * header is set here at all, just the auth token.
+   */
+  upload: async <T>(path: string, formData: FormData): Promise<T> => {
+    const token = tokenStore.get()
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      body: formData,
+    })
+
+    if (response.status === 204) return undefined as T
+
+    const text = await response.text()
+    const body = text ? JSON.parse(text) : null
+
+    if (!response.ok) {
+      const detail = body?.detail ?? body?.title ?? `Request failed with status ${response.status}`
+      throw new ApiError(response.status, detail)
+    }
+
+    return body as T
+  },
 }
 
 export interface UserSummary {

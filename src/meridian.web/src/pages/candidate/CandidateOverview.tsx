@@ -12,6 +12,7 @@ import {
 import { PageHeading } from '../../components/AppShell'
 import { Badge, Card, CountUp, EmptyState, Loading } from '../../components/ui'
 import { ScoreDial } from '../../components/ScoreDial'
+import { ResumesCard } from '../../components/ResumesCard'
 
 export function CandidateOverview() {
   const { user } = useAuth()
@@ -113,6 +114,8 @@ export function CandidateOverview() {
               </>
             )}
           </Card>
+
+          <ResumesCard />
         </div>
       </div>
     </>

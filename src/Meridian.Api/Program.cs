@@ -5,6 +5,7 @@ using Meridian.Domain.Entities;
 using Meridian.Infrastructure;
 using Meridian.Infrastructure.Persistence;
 using Meridian.Infrastructure.Security;
+using Meridian.Infrastructure.Storage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -28,6 +29,14 @@ var jwtSettings = builder.Configuration.GetSection(JwtSettings.SectionName).Get<
     ?? throw new InvalidOperationException("The Jwt configuration section is missing.");
 jwtSettings.Validate(builder.Environment.IsDevelopment());
 builder.Services.AddSingleton(Microsoft.Extensions.Options.Options.Create(jwtSettings));
+
+// ---------------------------------------------------------------------------
+// Cloud storage (Cloudflare R2) for resumes. Optional at startup: unlike the
+// signing key, a missing R2 section does not stop the API from starting, it
+// just means resume upload returns a clear failure until it is configured.
+// ---------------------------------------------------------------------------
+var r2Settings = builder.Configuration.GetSection(R2Settings.SectionName).Get<R2Settings>() ?? new R2Settings();
+builder.Services.AddSingleton(Microsoft.Extensions.Options.Options.Create(r2Settings));
 
 builder.Services
     .AddAuthentication(options =>

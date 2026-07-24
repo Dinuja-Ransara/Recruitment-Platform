@@ -3,6 +3,7 @@ using Meridian.Infrastructure.Identity;
 using Meridian.Infrastructure.Persistence;
 using Meridian.Infrastructure.Persistence.Repositories;
 using Meridian.Infrastructure.Security;
+using Meridian.Infrastructure.Storage;
 using Meridian.Ai.Matching;
 using Meridian.Ai.Strategies;
 using Meridian.Infrastructure.Services;
@@ -39,6 +40,12 @@ public static class DependencyInjection
         services.AddScoped<IJobService, JobService>();
         services.AddScoped<IApplicationService, ApplicationService>();
         services.AddScoped<IAnalyticsService, AnalyticsService>();
+        services.AddScoped<IResumeService, ResumeService>();
+
+        // Scoped rather than singleton: AmazonS3Client is thread-safe, but
+        // scoping it to the request keeps it consistent with everything else
+        // IResumeService depends on, and costs nothing meaningful to construct.
+        services.AddScoped<IFileStorage, R2FileStorage>();
 
         // The matching engine holds no mutable state between calls, so one
         // instance serves every request. The strategies it resolves are likewise
