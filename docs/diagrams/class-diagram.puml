@@ -1,57 +1,175 @@
 @startuml
-' Meridian Talent Platform - Class Diagram (MANDATORY)
-' Dinuja: this is a starting slice only. The full entity list, fields and
-' multiplicities are in src/Meridian.Domain/Entities/ and the EF configurations.
-skinparam classAttributeIconSize 0
+  ' Meridian Talent Platform - Class Diagram (MANDATORY)
+  skinparam classAttributeIconSize 0
 
-class User {
-  +int Id
-  +string Email
-  +string PasswordHash
-  +string FullName
-  +bool IsActive
-}
+  ' ── Identity ──────────────────────────────────────
+  class User {
+    +int Id
+    +string Email
+    +string FullName
+    +bool IsActive
+  }
 
-class Role {
-  +int Id
-  +string Name
-}
+  class Role {
+    +int Id
+    +string Name
+  }
 
-class UserRole {
-  +int UserId
-  +int RoleId
-}
+  class UserRole {
+    +int UserId
+    +int RoleId
+    +DateTime AssignedAt
+  }
 
-class CandidateProfile {
-  +int Id
-  +string Headline
-  +decimal YearsOfExperience
-  +EducationLevel HighestEducation
-}
+  ' ── Organisation ──────────────────────────────────
+  class Organization {
+    +int Id
+    +string Name
+    +string Country
+    +bool IsActive
+  }
 
-class JobPosting {
-  +int Id
-  +string Title
-  +JobStatus Status
-  +RankingStrategyType RankingStrategy
-  +JobPosting Clone()
-}
+  class Department {
+    +int Id
+    +string Name
+    +string CostCentre
+  }
 
-class JobApplication {
-  +int Id
-  +ApplicationStatus Status
-  +double? MatchScore
-  +string? ScoreBreakdownJson
-}
+  ' ── Candidate side ────────────────────────────────
+  class CandidateProfile {
+    +int Id
+    +string Headline
+    +decimal YearsOfExperience
+    +EducationLevel HighestEducation
+  }
 
-User "1" -- "*" UserRole
-Role "1" -- "*" UserRole
-User "1" -- "0..1" CandidateProfile
-CandidateProfile "1" -- "*" JobApplication
-JobPosting "1" -- "*" JobApplication
+  class Resume {
+    +int Id
+    +string FileName
+    +string SourceFormat
+    +bool IsPrimary
+  }
 
-note bottom of JobPosting
-  Clone() implements the Prototype
-  pattern, referenced in Chapter 4.
-end note
-@enduml
+  class Skill {
+    +int Id
+    +string Name
+    +string Category
+  }
+
+  class SkillAlias {
+    +int Id
+    +string Alias
+  }
+
+  class ResumeSkill {
+    +int Id
+    +decimal YearsOfExperience
+    +double ConfidenceScore
+  }
+
+  ' ── Job side ──────────────────────────────────────
+  class JobPosting {
+    +int Id
+    +string Title
+    +JobStatus Status
+    +RankingStrategyType RankingStrategy
+    +JobPosting Clone()
+  }
+
+  class JobRequiredSkill {
+    +int Id
+    +bool IsMandatory
+    +int Weight
+  }
+
+  ' ── Application pipeline ──────────────────────────
+  class JobApplication {
+    +int Id
+    +ApplicationStatus Status
+    +double? MatchScore
+    +string? ScoreBreakdownJson
+  }
+
+  class ApplicationEvent {
+    +int Id
+    +ApplicationStatus? FromStatus
+    +ApplicationStatus ToStatus
+    +DateTime OccurredAt
+  }
+
+  class Interview {
+    +int Id
+    +DateTime ScheduledStart
+    +InterviewMode Mode
+    +InterviewStatus Status
+  }
+
+  class InterviewFeedback {
+    +int Id
+    +string Strengths
+    +string Concerns
+    +HiringRecommendation Recommendation
+  }
+
+  class Evaluation {
+    +int Id
+    +int TechnicalScore
+    +int CommunicationScore
+    +int CultureFitScore
+    +double OverallScore
+  }
+
+  ' ── System ────────────────────────────────────────
+  class AuditLog {
+    +int Id
+    +string Action
+    +string EntityName
+    +DateTime OccurredAt
+  }
+
+  class Notification {
+    +int Id
+    +NotificationChannel Channel
+    +string Subject
+    +bool IsRead
+  }
+
+  ' ── Relationships ─────────────────────────────────
+  User "1" -- "*" UserRole
+  Role "1" -- "*" UserRole
+  User "1" -- "0..1" CandidateProfile
+
+  Organization "1" -- "*" Department
+  Organization "1" -- "*" User
+  Organization "1" -- "*" JobPosting
+  Department "1" -- "0..*" JobPosting
+
+  CandidateProfile "1" -- "*" Resume
+  CandidateProfile "1" -- "*" JobApplication
+
+  Resume "1" -- "*" ResumeSkill
+  Skill "1" -- "*" ResumeSkill
+  Skill "1" -- "*" SkillAlias
+
+  JobPosting "1" -- "*" JobRequiredSkill
+  Skill "1" -- "*" JobRequiredSkill
+  JobPosting "1" -- "*" JobApplication
+  JobPosting "*" -- "1" User : posted by
+
+  JobApplication "1" -- "*" ApplicationEvent
+  JobApplication "1" -- "*" Interview
+  JobApplication "1" -- "*" Evaluation
+  Interview "1" -- "0..1" InterviewFeedback
+
+  User "1" -- "*" Interview : interviewer
+  User "1" -- "*" Evaluation : evaluator
+  User "0..1" -- "*" ApplicationEvent : actor
+  User "0..1" -- "*" AuditLog
+  User "1" -- "*" Notification
+
+  note bottom of JobPosting
+    Clone() implements the Prototype
+    pattern, referenced in Chapter 4.
+  end note
+
+  @enduml

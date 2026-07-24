@@ -1,65 +1,20 @@
-# 2. Requirements
+# Chapter 2: Requirements
 
-## 2.1 Functional requirements
+## 2.1 Functional Requirements
+The functional requirements for the Meridian platform were mapped directly from the controller endpoints implemented within the system architecture. The following core requirements were established and met:
 
-The requirements below were derived from the specified scenario. Each is realised
-by one or more endpoints in the delivered interface.
+* **FR1 (Authentication):** Secure user registration and session management were provided. Users were authenticated and authorized before accessing protected resources.
+* **FR2 (Job Management):** Job postings were created, duplicated, and published by recruiters. 
+* **FR3 (Application Submission):** Candidate profiles were managed, and applications were submitted against active job postings, including the parsing of structured resume data.
+* **FR4 (Applicant Tracking):** The status of job applications was updated and tracked throughout the recruitment lifecycle.
+* **FR5 (Candidate Ranking):** Submitted applications were evaluated, and a ranked list of candidates was generated for recruiters and hiring managers based on explicit job requirements.
+* **FR6 (Organization Management):** Client organizations were registered and monitored within the system by administrative users.
 
-**Table 1.** Functional requirements.
+## 2.2 Non-Functional Requirements
+To ensure the system was secure, reliable, and accessible, several strict non-functional requirements were enforced at the code level:
 
-| Ref | Requirement |
-|---|---|
-| FR1 | Register a candidate account and issue an access token. |
-| FR2 | Authenticate by electronic mail and password, rejecting invalid credentials without disclosing whether the account exists. |
-| FR3 | Maintain a candidate profile: headline, location, experience, education. |
-| FR4 | Store an uploaded curriculum vitae and extract the skills evidenced within it. |
-| FR5 | Search published postings by keyword, country, city, work mode, employment type and seniority. |
-| FR6 | Submit an application to a published posting, rejecting a duplicate application. |
-| FR7 | Score each application against its posting on submission and present the breakdown to the candidate. |
-| FR8 | Recommend published postings to a candidate in descending order of fit. |
-| FR9 | Track and withdraw an application. |
-| FR10 | Create a posting as a draft with weighted skill requirements and a ranking strategy. |
-| FR11 | Publish, close and duplicate a posting. |
-| FR12 | Present the applicant pool ranked by fit, each entry carrying its score breakdown. |
-| FR13 | Progress an application through the pipeline, rejecting transitions that are not permitted. |
-| FR14 | Record every state change as a timeline entry attributable to the acting user. |
-| FR15 | Present a hiring manager with shortlisted candidates only. |
-| FR16 | Present an administrator with organisations, departments and record counts. |
-| FR17 | Record authentication attempts and entity modifications in an audit trail. |
-
-## 2.2 Non-functional requirements
-
-**Table 2.** Non-functional requirements.
-
-| Ref | Requirement |
-|---|---|
-| NFR1 | Passwords stored using BCrypt at work factor twelve, never reversibly. |
-| NFR2 | Authorisation enforced on the server for every protected endpoint, independently of the client. |
-| NFR3 | Scoring deterministic: identical input produces identical output. |
-| NFR4 | Scoring operates with no external network call. |
-| NFR5 | Concurrent modification of an application detected and rejected, not silently overwritten. |
-| NFR6 | Security events recorded in an append-only trail retaining acting user and network address. |
-| NFR7 | The interface remains usable from a viewport width of 360 pixels. |
-| NFR8 | Interactive elements reachable by keyboard and carrying accessible labels. |
-| NFR9 | The interface documented using OpenAPI and exercisable from a browser. |
-| NFR10 | Database unavailability does not prevent startup; the condition is reported through a health endpoint. |
-
-## 2.3 Features of the application
-
-**Candidate portal.** Registration and authentication, profile management,
-curriculum vitae storage, filtered job search, application submission with an
-optional covering letter, an application list, a detail view presenting the score
-breakdown and a status timeline, withdrawal, and ranked recommendations.
-
-**Recruiter portal.** Posting creation with weighted skill requirements and a
-selectable ranking strategy, publication, closure and duplication, the ranked
-applicant pool with an expandable factor breakdown per applicant, and pipeline
-progression.
-
-**Hiring manager portal.** A view restricted to shortlisted candidates, each
-carrying the same reasoning shown to the recruiter, together with decision
-actions.
-
-**Administration portal.** Organisation and department directory, record counts
-across the core tables, and the recent security event feed drawn from the audit
-trail.
+* **Security & Cryptography:** Passwords were never stored in plaintext. BCrypt password hashing was implemented at a work factor of 12 to ensure robust resistance against brute-force attacks.
+* **Access Control:** Strict role-based access control (RBAC) was enforced on every API endpoint. Actions were restricted based on the user's assigned role (Candidate, Recruiter, Hiring Manager, or Administrator) to prevent privilege escalation.
+* **Auditability:** Comprehensive audit logging was integrated into the system. Critical state changes and administrative actions were recorded to maintain a verifiable history of system events.
+* **Accessibility & Responsiveness:** The user interface was designed to be fully responsive. Usability and layout integrity were maintained on screens as narrow as 360px, ensuring access across diverse mobile devices.
+* **Algorithm Predictability:** Deterministic scoring was utilized for the candidate ranking engine. The evaluation logic was designed so that identical resume inputs matched against identical job requirements would consistently produce the exact same score breakdown, completely eliminating the unpredictability of black-box AI screening.
