@@ -42,6 +42,13 @@ if (-not (Test-Path $connectionStringPath)) {
 
 $connectionString = (Get-Content $connectionStringPath -Raw).Trim()
 
+$r2CredentialsPath = Join-Path $deployDir 'r2-credentials.json'
+$r2Settings = if (Test-Path $r2CredentialsPath) {
+    Get-Content $r2CredentialsPath -Raw | ConvertFrom-Json
+} else {
+    $null
+}
+
 [xml]$profileXml = Get-Content $profilePath
 $node = $profileXml.publishData.publishProfile | Where-Object { $_.publishMethod -eq 'MSDeploy' } | Select-Object -First 1
 
@@ -74,6 +81,18 @@ $productionSettings = [ordered]@{
         AllowedOrigins         = @('https://meridian-talent.pages.dev')
         AllowedOriginSuffixes  = @('meridian-talent.pages.dev')
     }
+}
+
+if ($r2Settings) {
+    $productionSettings.R2 = [ordered]@{
+        AccountId       = $r2Settings.AccountId
+        AccessKeyId     = $r2Settings.AccessKeyId
+        SecretAccessKey = $r2Settings.SecretAccessKey
+        BucketName      = $r2Settings.BucketName
+    }
+    Write-Host 'R2 credentials found, resume storage will be live.' -ForegroundColor DarkGray
+} else {
+    Write-Host 'No deploy/r2-credentials.json found, resume upload will fail until it exists.' -ForegroundColor Yellow
 }
 
 $settingsPath = Join-Path $repoRoot 'src/Meridian.Api/appsettings.Production.json'

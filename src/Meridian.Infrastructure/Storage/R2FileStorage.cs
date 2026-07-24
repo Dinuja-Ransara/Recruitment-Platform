@@ -29,6 +29,13 @@ public class R2FileStorage : IFileStorage
         {
             ServiceURL = $"https://{settings.AccountId}.r2.cloudflarestorage.com",
             ForcePathStyle = true,
+
+            // AWSSDK.S3 v4 defaults to sending an x-amz-checksum trailer the
+            // AWS SDK invented after S3's original API surface. R2 implements
+            // S3's original API, not that extension, and rejects the request.
+            // Forcing "when required" is what keeps requests plain SigV4.
+            RequestChecksumCalculation = Amazon.Runtime.RequestChecksumCalculation.WHEN_REQUIRED,
+            ResponseChecksumValidation = Amazon.Runtime.ResponseChecksumValidation.WHEN_REQUIRED,
         };
 
         _client = new AmazonS3Client(
@@ -45,6 +52,11 @@ public class R2FileStorage : IFileStorage
             InputStream = content,
             ContentType = contentType,
             AutoCloseStream = false,
+
+            // R2 returns "STREAMING-AWS4-HMAC-SHA256-PAYLOAD not implemented"
+            // against the SDK's default chunked-signed upload. The connection
+            // is already TLS, so an unsigned payload loses nothing real here.
+            DisablePayloadSigning = true,
         }, ct);
 
         return key;
