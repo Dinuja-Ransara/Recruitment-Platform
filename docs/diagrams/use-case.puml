@@ -1,7 +1,5 @@
 @startuml
 ' Meridian Talent Platform - Use Case Diagram
-' Dinuja: extend this. The actors and a first slice of use cases are here to
-' start from; the full list is in docs/tasks/dinuja.md.
 left to right direction
 skinparam packageStyle rectangle
 skinparam actorStyle awesome
@@ -17,11 +15,19 @@ rectangle "Meridian Talent Platform" {
   usecase "Search job postings" as UC3
   usecase "Apply to a posting" as UC4
   usecase "Track application" as UC5
+  usecase "Withdraw application" as UC6
+
   usecase "Create job posting" as UC10
   usecase "Publish posting" as UC11
+  usecase "Duplicate posting" as UC12
   usecase "View ranked applicants" as UC13
+  usecase "Change applicant status" as UC14
+
   usecase "Review shortlist" as UC20
-  usecase "Monitor system" as UC30
+  usecase "Record hiring decision" as UC21
+
+  usecase "Manage organisations" as UC30
+  usecase "Monitor system" as UC31
 }
 
 Candidate --> UC1
@@ -29,15 +35,20 @@ Candidate --> UC2
 Candidate --> UC3
 Candidate --> UC4
 Candidate --> UC5
+Candidate --> UC6
 
 Recruiter --> UC2
 Recruiter --> UC10
 Recruiter --> UC11
+Recruiter --> UC12
 Recruiter --> UC13
+Recruiter --> UC14
 
 Manager --> UC2
 Manager --> UC20
+Manager --> UC21
 
 Administrator --> UC2
 Administrator --> UC30
+Administrator --> UC31
 @enduml
