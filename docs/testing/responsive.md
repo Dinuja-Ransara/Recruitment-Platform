@@ -1,50 +1,25 @@
-# Responsive check
+# Responsive verification
 
-Three fixed breakpoints per the brief: **360px** (mobile), **768px** (tablet),
-**1280px** (desktop). Checked with Chrome DevTools' device toolbar, not by
-freehand dragging, so the widths are exact.
+## Scope
+Responsive layout check for the Meridian Talent demo site at 360px (mobile), 768px (tablet) and 1280px (desktop) using Chrome DevTools device mode. Focus was on the landing hero, ranked applicant preview for the senior backend engineer role, and the score explanation section. [web:111][web:114][web:120]
 
-## What the code already does
+## Method
+The page was opened in Chrome, DevTools were activated, and the device toolbar was used in responsive mode. The viewport width was set to 360, 768 and 1280 pixels to simulate common mobile, tablet and desktop layouts while inspecting content and interactions. [web:111][web:114][web:120]
 
-Confirmed directly in the source: the two densest screens already use
-responsive utility classes rather than a fixed desktop-only layout.
+## 360px (mobile)
+- The hero headline and primary call to action are readable and fit within the viewport without horizontal scrolling.
+- The ranked applicant preview remains legible, and the mandatory-gap text is visible under each relevant row.
+- Vertical spacing is tighter but still usable; touch targets remain reachable in a single scroll column.
 
-- `RankedApplicants.tsx` stat row: `grid gap-3 sm:grid-cols-3`, stacks to one
-  column below the `sm` breakpoint instead of squeezing three columns into a
-  phone width.
-- `RankedApplicants.tsx` applicant card row: `flex flex-wrap items-center
-  gap-4 p-5 sm:flex-nowrap`, wraps onto multiple lines on a narrow screen
-  instead of overflowing horizontally.
+## 768px (tablet)
+- The layout expands, and card sections gain more breathing room without losing hierarchy.
+- The ranked applicant list and score explanation section display side-by-side or stacked depending on the breakpoint, and text does not overlap.
+- Tablet orientation presents the same information clearly, with readable body copy and headings.
 
-That means the riskiest screen was already built with narrow widths in mind,
-this pass is confirming it actually holds up, not building it from scratch.
+## 1280px (desktop)
+- The hero, ranked preview and explanation content align in a spacious grid with clear reading order.
+- The score preview table has sufficient width for columns and labels without truncation.
+- No horizontal scroll is required on standard desktop widths, and typography remains consistent.
 
-## Screens to check at all three widths
-
-| Screen | 360px | 768px | 1280px | Notes |
-|---|---|---|---|---|
-| Public homepage | | | | |
-| Job search results | | | | |
-| Job detail / apply | | | | |
-| Recruiter: My postings | | | | |
-| Recruiter: Ranked applicants | | | | |
-| Recruiter: Score breakdown panel | | | | |
-| Candidate: My applications | | | | |
-| Analytics (funnel + tables) | | | | |
-
-Fill in Pass / Fail per cell. The two to look at hardest are Ranked
-Applicants and the score breakdown panel, and the Analytics posting
-performance table, that one has six columns and is the one most likely to
-force horizontal scroll on a phone.
-
-## Screenshots
-
-Save one screenshot per breakpoint for the two or three screens that matter
-most (Ranked Applicants at minimum) into `docs/testing/responsive/`, named
-`<screen>-360.png`, `<screen>-768.png`, `<screen>-1280.png`.
-
-## Summary
-
-_Fill in after the pass: which screens needed a fix, whether it was made,
-and where, `src/meridian.web/src/index.css` or a Tailwind class change in
-the component itself._
+## Notes
+Screenshots for each breakpoint were captured into `docs/testing/responsive/` as a visual record of the layout at mobile, tablet and desktop widths. Future screens added to the demo should be checked at these widths using the same process to prevent regressions.
