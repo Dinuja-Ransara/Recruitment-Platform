@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { Roles, useAuth } from '../auth/AuthContext'
 import { Brand } from './Brand'
+import { MeridianAssistant } from './MeridianAssistant'
 
 interface NavItem {
   to: string
@@ -179,6 +180,8 @@ export function AppShell() {
           <Outlet />
         </main>
       </div>
+
+      <MeridianAssistant />
     </div>
   )
 }

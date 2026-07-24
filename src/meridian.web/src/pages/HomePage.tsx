@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Brand } from '../components/Brand'
+import { MeridianAssistant } from '../components/MeridianAssistant'
 
 /**
  * The public landing page.
@@ -212,6 +213,8 @@ export function HomePage() {
           </p>
         </div>
       </footer>
+
+      <MeridianAssistant />
     </div>
   )
 }

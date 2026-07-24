@@ -1,0 +1,8 @@
+name = "meridian-talent"
+compatibility_date = "2026-01-01"
+pages_build_output_dir = "dist"
+
+# Cloudflare Workers AI — powers the candidate-support assistant. Free tier,
+# no API key, runs server-side inside the Pages Function at functions/api/chat.ts.
+[ai]
+binding = "AI"
