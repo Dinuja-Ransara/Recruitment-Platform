@@ -1,0 +1,57 @@
+@startuml
+' Meridian Talent Platform - Class Diagram (MANDATORY)
+' Dinuja: this is a starting slice only. The full entity list, fields and
+' multiplicities are in src/Meridian.Domain/Entities/ and the EF configurations.
+skinparam classAttributeIconSize 0
+
+class User {
+  +int Id
+  +string Email
+  +string PasswordHash
+  +string FullName
+  +bool IsActive
+}
+
+class Role {
+  +int Id
+  +string Name
+}
+
+class UserRole {
+  +int UserId
+  +int RoleId
+}
+
+class CandidateProfile {
+  +int Id
+  +string Headline
+  +decimal YearsOfExperience
+  +EducationLevel HighestEducation
+}
+
+class JobPosting {
+  +int Id
+  +string Title
+  +JobStatus Status
+  +RankingStrategyType RankingStrategy
+  +JobPosting Clone()
+}
+
+class JobApplication {
+  +int Id
+  +ApplicationStatus Status
+  +double? MatchScore
+  +string? ScoreBreakdownJson
+}
+
+User "1" -- "*" UserRole
+Role "1" -- "*" UserRole
+User "1" -- "0..1" CandidateProfile
+CandidateProfile "1" -- "*" JobApplication
+JobPosting "1" -- "*" JobApplication
+
+note bottom of JobPosting
+  Clone() implements the Prototype
+  pattern, referenced in Chapter 4.
+end note
+@enduml

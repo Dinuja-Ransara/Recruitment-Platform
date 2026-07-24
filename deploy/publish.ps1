@@ -10,6 +10,15 @@
         pwsh -File deploy/publish.ps1
 #>
 
+param(
+    # Clears every row and reseeds the demonstration data, for this deployment
+    # only. The hosted database is on a private network and cannot be reached
+    # from here, so the rebuild has to be triggered from inside the application.
+    # It deletes rows and never drops the database: the hosting login has no
+    # CREATE DATABASE permission. Always redeploy without this switch afterwards.
+    [switch]$ResetDatabase
+)
+
 $ErrorActionPreference = 'Stop'
 
 $repoRoot   = Split-Path -Parent $PSScriptRoot
@@ -60,6 +69,7 @@ $productionSettings = [ordered]@{
         SigningKey         = $signingKey
         AccessTokenMinutes = 120
     }
+    Seed = [ordered]@{ RebuildDemoDataOnStartup = [bool]$ResetDatabase }
     Cors = [ordered]@{
         AllowedOrigins         = @('https://meridian-talent.pages.dev')
         AllowedOriginSuffixes  = @('meridian-talent.pages.dev')
@@ -83,17 +93,32 @@ if ($LASTEXITCODE -ne 0) { throw 'dotnet publish failed.' }
 $webConfigPath = Join-Path $publishDir 'web.config'
 if (Test-Path $webConfigPath) {
     [xml]$webConfig = Get-Content $webConfigPath
-    $handler = $webConfig.configuration.'system.webServer'.aspNetCore
-    if ($handler) {
-        $env = $webConfig.CreateElement('environmentVariables')
+
+    # The aspNetCore element sits under <location><system.webServer>, not directly
+    # under <configuration>, so it has to be selected by XPath rather than by
+    # dotted property access, which silently returns nothing for the wrong path.
+    $handler = $webConfig.SelectSingleNode('//aspNetCore')
+    if (-not $handler) { throw 'Could not find the aspNetCore element in web.config.' }
+
+    # Startup failures on a shared host are otherwise invisible: IIS returns a
+    # generic 500.30 with no detail. stdout logging is what makes them readable.
+    $handler.SetAttribute('stdoutLogEnabled', 'true')
+    $handler.SetAttribute('stdoutLogFile', '.\logs\stdout')
+
+    $envNode = $webConfig.CreateElement('environmentVariables')
+    foreach ($pair in @(
+        @{ name = 'ASPNETCORE_ENVIRONMENT';   value = 'Production' },
+        @{ name = 'ASPNETCORE_DETAILEDERRORS'; value = 'true' }
+    )) {
         $var = $webConfig.CreateElement('environmentVariable')
-        $var.SetAttribute('name', 'ASPNETCORE_ENVIRONMENT')
-        $var.SetAttribute('value', 'Production')
-        $env.AppendChild($var) | Out-Null
-        $handler.AppendChild($env) | Out-Null
-        $webConfig.Save($webConfigPath)
-        Write-Host 'Pinned ASPNETCORE_ENVIRONMENT=Production in web.config' -ForegroundColor DarkGray
+        $var.SetAttribute('name',  $pair.name)
+        $var.SetAttribute('value', $pair.value)
+        $envNode.AppendChild($var) | Out-Null
     }
+
+    $handler.AppendChild($envNode) | Out-Null
+    $webConfig.Save($webConfigPath)
+    Write-Host 'web.config: environment pinned, stdout logging enabled' -ForegroundColor DarkGray
 }
 
 # --- Deploy -----------------------------------------------------------------
@@ -101,7 +126,10 @@ if (Test-Path $webConfigPath) {
 $msdeploy = 'C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe'
 if (-not (Test-Path $msdeploy)) { throw "msdeploy.exe not found at $msdeploy" }
 
-$dest = "contentPath=$siteName,computerName=https://$publishUrl/msdeploy.axd?site=$siteName,userName=$userName,password=$password,authType=Basic"
+# Port 8172 is the Web Management Service listener. The publishSettings file
+# gives the host without a scheme or port, and the endpoint is not served on 443.
+$endpoint = "https://${publishUrl}:8172/msdeploy.axd?site=$siteName"
+$dest = "contentPath=$siteName,computerName=$endpoint,userName=$userName,password=$password,authType=Basic"
 
 Write-Host 'Syncing to host...' -ForegroundColor Cyan
 & $msdeploy `

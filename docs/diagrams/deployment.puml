@@ -1,0 +1,29 @@
+@startuml
+' Meridian Talent Platform - Deployment Diagram
+' Dinuja: this reflects the actual running deployment. Extend with detail.
+node "Client device" {
+  artifact "Web browser"
+}
+
+node "Cloudflare edge" {
+  artifact "React SPA (static assets)"
+  artifact "Pages Function\n/api/* reverse proxy"
+}
+
+node "MonsterASP.NET host" {
+  artifact "ASP.NET Core 8 Web API"
+}
+
+database "SQL Server 2025\ndb60830" as DB
+
+"Web browser" --> "React SPA (static assets)" : HTTPS
+"Web browser" --> "Pages Function\n/api/* reverse proxy" : HTTPS
+"Pages Function\n/api/* reverse proxy" --> "ASP.NET Core 8 Web API" : HTTP
+"ASP.NET Core 8 Web API" --> DB : TCP 1433
+
+note right of "Pages Function\n/api/* reverse proxy"
+  The API host cannot issue a TLS
+  certificate, so the edge terminates
+  HTTPS and forwards server-side.
+end note
+@enduml

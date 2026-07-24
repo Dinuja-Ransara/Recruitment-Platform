@@ -448,3 +448,6 @@ deploy/*
 
 # Generated at deploy time, contains the live connection string and signing key.
 src/Meridian.Api/appsettings.Production.json
+
+# Wrangler local cache
+.wrangler/

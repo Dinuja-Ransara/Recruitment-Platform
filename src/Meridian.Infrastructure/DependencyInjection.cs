@@ -3,6 +3,8 @@ using Meridian.Infrastructure.Identity;
 using Meridian.Infrastructure.Persistence;
 using Meridian.Infrastructure.Persistence.Repositories;
 using Meridian.Infrastructure.Security;
+using Meridian.Ai.Matching;
+using Meridian.Ai.Strategies;
 using Meridian.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -35,7 +37,24 @@ public static class DependencyInjection
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IJobService, JobService>();
+        services.AddScoped<IApplicationService, ApplicationService>();
+        services.AddScoped<IAnalyticsService, AnalyticsService>();
+
+        // The matching engine holds no mutable state between calls, so one
+        // instance serves every request. The strategies it resolves are likewise
+        // stateless value objects.
+        // Each strategy is registered individually so the factory receives them
+        // through IEnumerable<IRankingStrategy>. Registering only the factory
+        // would hand it an empty collection, which the container satisfies
+        // silently and which then fails deep inside scoring.
+        services.AddSingleton<IRankingStrategy, SkillWeightedStrategy>();
+        services.AddSingleton<IRankingStrategy, TfIdfSimilarityStrategy>();
+        services.AddSingleton<IRankingStrategy, HybridStrategy>();
+        services.AddSingleton<IRankingStrategy, ExperienceFirstStrategy>();
+        services.AddSingleton<IRankingStrategyFactory, RankingStrategyFactory>();
+        services.AddSingleton<IMatchingEngine, MatchingEngine>();
         services.AddScoped<DatabaseSeeder>();
+        services.AddScoped<DemoDataSeeder>();
 
         // Stateless and thread-safe, so a single instance serves every request.
         services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
