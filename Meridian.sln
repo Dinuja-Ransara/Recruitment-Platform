@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2B38B466
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meridian.Ai.Tests", "tests\Meridian.Ai.Tests\Meridian.Ai.Tests.csproj", "{565C6F5D-7D0C-44DB-A828-DD7C8ADA4586}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meridian.Infrastructure.Tests", "tests\Meridian.Infrastructure.Tests\Meridian.Infrastructure.Tests.csproj", "{735EA441-29E4-464E-BDB8-969466C06193}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{565C6F5D-7D0C-44DB-A828-DD7C8ADA4586}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{565C6F5D-7D0C-44DB-A828-DD7C8ADA4586}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{565C6F5D-7D0C-44DB-A828-DD7C8ADA4586}.Release|Any CPU.Build.0 = Release|Any CPU
+		{735EA441-29E4-464E-BDB8-969466C06193}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{735EA441-29E4-464E-BDB8-969466C06193}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{735EA441-29E4-464E-BDB8-969466C06193}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{735EA441-29E4-464E-BDB8-969466C06193}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D40C814B-9543-437C-8D67-C1F35ED13413} = {7DD345A2-AD7B-40AF-AB79-C43B0F9CD9E0}
@@ -60,5 +66,6 @@ Global
 		{3832884B-775F-4718-B12D-53F37BDE4967} = {7DD345A2-AD7B-40AF-AB79-C43B0F9CD9E0}
 		{9D3182EC-BF4F-4D0F-9915-56865CDEB14C} = {7DD345A2-AD7B-40AF-AB79-C43B0F9CD9E0}
 		{565C6F5D-7D0C-44DB-A828-DD7C8ADA4586} = {2B38B466-D428-4C22-A694-6A1203BF61C5}
+		{735EA441-29E4-464E-BDB8-969466C06193} = {2B38B466-D428-4C22-A694-6A1203BF61C5}
 	EndGlobalSection
 EndGlobal
