@@ -20,8 +20,11 @@ export function HomePage() {
             <a href="#how" className="hidden text-sm text-ink-700 hover:text-accent sm:block">
               How it works
             </a>
-            <a href="#roles" className="hidden text-sm text-ink-700 hover:text-accent sm:block">
-              For teams
+            <a href="#features" className="hidden text-sm text-ink-700 hover:text-accent sm:block">
+              Features
+            </a>
+            <a href="#team" className="hidden text-sm text-ink-700 hover:text-accent sm:block">
+              Team
             </a>
             <Link
               to="/login"
@@ -34,8 +37,16 @@ export function HomePage() {
       </header>
 
       {/* Hero */}
-      <section className="border-b border-line bg-ink-900">
-        <div className="mx-auto grid max-w-6xl gap-10 px-6 py-16 lg:grid-cols-2 lg:py-24">
+      <section className="relative overflow-hidden border-b border-line bg-ink-900">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-40 -right-40 h-[36rem] w-[36rem] rounded-full bg-accent/25 blur-[120px]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-56 -left-40 h-[30rem] w-[30rem] rounded-full bg-accent/10 blur-[120px]"
+        />
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-6 py-16 lg:grid-cols-2 lg:py-24">
           <div className="flex flex-col justify-center">
             <p className="text-xs font-semibold tracking-[0.2em] text-accent-soft uppercase">
               Recruitment and talent management
@@ -168,6 +179,63 @@ export function HomePage() {
         </div>
       </section>
 
+      {/* Everything the platform does */}
+      <section id="features" className="border-b border-line">
+        <div className="mx-auto max-w-6xl px-6 py-16">
+          <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">Platform</p>
+          <h2 className="mt-2 text-2xl font-semibold text-ink-900">
+            A complete recruitment platform, not a scoring demo bolted onto a CRUD app
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-500">
+            Every item below is a real, working feature in this deployment, not a
+            roadmap slide.
+          </p>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                title: 'Explainable AI matching',
+                detail:
+                  'Skill-taxonomy extraction, TF-IDF resume similarity and structured experience, education and location signals, written in plain C#. No external AI API, no key, nothing to run offline.',
+              },
+              {
+                title: 'AI candidate support assistant',
+                detail:
+                  'A grounded chat assistant on every screen, answering how to search, apply, or rank applicants, running on Cloudflare Workers AI at no cost.',
+              },
+              {
+                title: 'Cloud resume storage',
+                detail:
+                  'CVs upload straight to Cloudflare R2 object storage behind a private bucket, served back through time-limited signed links, never a permanent public URL.',
+              },
+              {
+                title: 'Role-based access control',
+                detail:
+                  'Every endpoint enforces the caller’s role and organisation. A recruiter cannot touch another client’s postings, a candidate cannot reach an admin route.',
+              },
+              {
+                title: 'Real-time recruitment analytics',
+                detail:
+                  'A live hiring funnel, posting performance, and skill-demand breakdown, computed from the actual application pipeline rather than a cached report.',
+              },
+              {
+                title: 'Audited and accessible',
+                detail:
+                  'Security-relevant actions are written to an append-only audit log. The interface is keyboard-navigable and responsive from 360px to desktop.',
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="rounded-[var(--radius-card)] border border-line bg-surface p-5 shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-lift)]"
+              >
+                <h3 className="font-medium text-ink-900">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-ink-500">{item.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Roles */}
       <section id="roles" className="border-b border-line bg-surface-alt">
         <div className="mx-auto max-w-6xl px-6 py-16">
@@ -199,6 +267,72 @@ export function HomePage() {
               <div key={item.role} className="rounded-[6px] border border-line bg-surface p-5">
                 <h3 className="font-medium text-ink-900">{item.role}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-ink-500">{item.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Team */}
+      <section id="team" className="border-b border-line">
+        <div className="mx-auto max-w-6xl px-6 py-16">
+          <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">Built by</p>
+          <h2 className="mt-2 text-2xl font-semibold text-ink-900">
+            Four engineers from NSBM Green University
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-500">
+            Built for the current job market, where automated screening is common but
+            rarely explains itself. This was the group's answer to that.
+          </p>
+
+          <div className="mt-10 grid grid-cols-2 gap-8 sm:grid-cols-4">
+            {[
+              {
+                name: 'Hasitha Bandara',
+                photo: '/team/hasitha.jpg',
+                role: 'Architecture, backend & AI scoring engine',
+                href: 'https://hasithabandara.com',
+                linkLabel: 'hasithabandara.com',
+              },
+              {
+                name: 'Dinuja Ransara',
+                photo: '/team/dinuja.jpg',
+                role: 'Architecture diagrams & report',
+                href: 'https://dinuja-portfolio-nu.vercel.app/',
+                linkLabel: 'Portfolio',
+              },
+              {
+                name: 'Ashan Iduranga',
+                photo: '/team/ashan.jpg',
+                role: 'API testing & quality assurance',
+                href: 'https://github.com/Ashan-Iduranga',
+                linkLabel: 'GitHub',
+              },
+              {
+                name: 'Sewmin Menuja',
+                photo: '/team/sewmin.jpg',
+                role: 'Demo data, accessibility & UX',
+                href: 'https://github.com/Sewmin-Menuja',
+                linkLabel: 'GitHub',
+              },
+            ].map((person) => (
+              <div key={person.name} className="flex flex-col items-center text-center">
+                <img
+                  src={person.photo}
+                  alt={person.name}
+                  className="h-20 w-20 rounded-full border border-line object-cover shadow-[var(--shadow-card)] sm:h-24 sm:w-24"
+                  loading="lazy"
+                />
+                <p className="mt-3 text-sm font-medium text-ink-900">{person.name}</p>
+                <p className="mt-1 text-xs leading-snug text-ink-500">{person.role}</p>
+                <a
+                  href={person.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-2 text-xs font-medium text-accent hover:underline"
+                >
+                  {person.linkLabel}
+                </a>
               </div>
             ))}
           </div>
