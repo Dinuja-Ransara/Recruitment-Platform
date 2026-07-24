@@ -292,7 +292,7 @@ export function HomePage() {
                 photo: '/team/hasitha.jpg',
                 role: 'Architecture, backend & AI scoring engine',
                 href: 'https://hasithabandara.com',
-                linkLabel: 'hasithabandara.com',
+                linkLabel: 'Portfolio',
               },
               {
                 name: 'Dinuja Ransara',

@@ -35,7 +35,7 @@ Architecture: ASP.NET Core 8 Web API with a SQL Server database, a React fronten
 This is a demonstration deployment with seeded sample data, not a live production HR system, and does not process real candidate data.
 `.trim()
 
-const SYSTEM = `You are the Meridian Assistant, an AI support chatbot on the Meridian Talent Platform, a recruitment and hiring system. You help candidates, recruiters, hiring managers, and administrators understand how to use the platform.
+const SYSTEM = `You are Meridian AI, the built-in AI assistant on the Meridian Talent Platform, a recruitment and hiring system. You help candidates, recruiters, hiring managers, and administrators understand how to use the platform.
 
 Rules:
 - Be warm, concise, and professional. Keep answers to 1-4 short sentences unless the visitor asks for more detail.

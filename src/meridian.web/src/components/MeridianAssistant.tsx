@@ -14,7 +14,7 @@ interface Message {
 }
 
 const GREETING =
-  "Hi, I'm the Meridian Assistant. Ask me how to search jobs, apply, rank applicants, or anything else about the platform."
+  "Hi, I'm Meridian AI. Ask me how to search jobs, apply, rank applicants, or anything else about the platform."
 
 const SUGGESTIONS = ['How does the scoring work?', 'How do I apply for a job?', 'How do I publish a posting?']
 
@@ -123,10 +123,10 @@ export function MeridianAssistant() {
     <>
       <button
         type="button"
-        aria-label={open ? 'Close assistant' : 'Open the Meridian Assistant'}
+        aria-label={open ? 'Close Meridian AI' : 'Open Meridian AI'}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="fixed right-5 bottom-5 z-50 flex h-13 items-center gap-2 rounded-full bg-accent px-4 text-sm font-medium text-white shadow-[0_8px_24px_rgba(36,109,240,.35)] transition-transform hover:scale-105 hover:bg-accent-hover"
+        className="fixed right-5 bottom-5 z-50 flex h-13 items-center gap-2 rounded-full bg-accent px-4 text-sm font-medium text-white shadow-[0_8px_24px_rgba(255,80,0,.35)] transition-transform hover:scale-105 hover:bg-accent-hover"
       >
         {open ? (
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
@@ -142,7 +142,7 @@ export function MeridianAssistant() {
                 strokeWidth="1.4"
               />
             </svg>
-            Ask the Assistant
+            Ask Meridian AI
           </>
         )}
       </button>
@@ -150,7 +150,7 @@ export function MeridianAssistant() {
       {open && (
         <section
           role="dialog"
-          aria-label="Meridian Assistant chat"
+          aria-label="Meridian AI chat"
           className="fixed right-5 bottom-21 z-50 flex h-110 w-90 max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-[6px] border border-line bg-surface shadow-[0_16px_48px_rgba(10,17,32,.18)]"
         >
           <header className="flex items-center gap-2 border-b border-line bg-surface-alt px-4 py-3">
@@ -165,7 +165,7 @@ export function MeridianAssistant() {
               </svg>
             </span>
             <span className="leading-tight">
-              <strong className="block text-sm font-semibold text-ink-900">Meridian Assistant</strong>
+              <strong className="block text-sm font-semibold text-ink-900">Meridian AI</strong>
               <em className="block text-xs text-ink-400 not-italic">AI, can make mistakes</em>
             </span>
           </header>
