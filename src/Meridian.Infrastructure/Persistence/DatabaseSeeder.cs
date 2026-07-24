@@ -36,6 +36,7 @@ public class DatabaseSeeder
         await SeedOrganizationsAsync(ct);
         await SeedSkillsAsync(ct);
         await SeedUsersAsync(ct);
+        await SeedJobPostingsAsync(ct);
         await _context.SaveChangesAsync(ct);
     }
 
@@ -114,7 +115,6 @@ public class DatabaseSeeder
             return;
         }
 
-        // Canonical name, category, then the aliases that resolve back to it.
         var taxonomy = new (string Name, string Category, string[] Aliases)[]
         {
             ("C#", "Language", new[] { "csharp", "c sharp", "c-sharp" }),
@@ -188,7 +188,7 @@ public class DatabaseSeeder
         {
             Headline = "Full stack engineer, .NET and React",
             Summary = "Six years building line-of-business web applications on ASP.NET Core and React, "
-                      + "most recently on a payments platform handling regional settlement.",
+                    + "most recently on a payments platform handling regional settlement.",
             City = "Colombo",
             Country = "Sri Lanka",
             YearsOfExperience = 6,
@@ -269,16 +269,165 @@ public class DatabaseSeeder
         };
 
         _context.Users.AddRange(
-    administrator,
-    recruiter,
-    hiringManager,
-    candidate,
-    candidate2,
-    candidate3,
-    candidate4,
-    candidate5,
-    candidate6,
-    candidate7);
+            administrator,
+            recruiter,
+            hiringManager,
+            candidate,
+            candidate2,
+            candidate3,
+            candidate4,
+            candidate5,
+            candidate6,
+            candidate7);
+
+        await _context.SaveChangesAsync(ct);
+    }
+
+    private async Task SeedJobPostingsAsync(CancellationToken ct)
+    {
+        if (await _context.JobPostings.AnyAsync(ct))
+        {
+            return;
+        }
+
+        var organizations = await _context.Organizations
+            .Include(o => o.Departments)
+            .ToDictionaryAsync(o => o.Name, ct);
+
+        var skills = await _context.Skills
+            .ToDictionaryAsync(s => s.Name, ct);
+
+        var recruiter = await _context.Users
+            .FirstAsync(u => u.Email == "recruiter@meridian.example.com", ct);
+
+        var meridian = organizations["Meridian HR Consulting"];
+        var northwind = organizations["Northwind Logistics"];
+        var halcyon = organizations["Halcyon Financial Group"];
+
+        var techPractice = meridian.Departments.First(d => d.Name == "Technology Practice");
+        var engineering = northwind.Departments.First(d => d.Name == "Engineering");
+        var digitalBanking = halcyon.Departments.First(d => d.Name == "Digital Banking");
+
+        var job1 = new JobPosting
+        {
+            Title = "Backend Software Engineer",
+            Description = "Join the Technology Practice in Colombo to build and enhance enterprise recruitment workflows used by regional clients. The role focuses on ASP.NET Core services, SQL-backed data processing and integrations that support screening, reporting and candidate lifecycle management.",
+            Responsibilities = "Design and implement backend services, build secure REST APIs, optimize database access, write automated tests, support production deployments and collaborate with frontend engineers and recruiters to deliver reliable hiring workflows.",
+            OrganizationId = meridian.Id,
+            DepartmentId = techPractice.Id,
+            City = "Colombo",
+            Country = "Sri Lanka",
+            WorkMode = WorkMode.Hybrid,
+            EmploymentType = EmploymentType.FullTime,
+            Seniority = SeniorityLevel.Mid,
+            MinYearsExperience = 3,
+            RequiredEducation = EducationLevel.Bachelors,
+            SalaryMin = 180000,
+            SalaryMax = 260000,
+            Currency = "LKR",
+            Status = JobStatus.Published,
+            PublishedAt = DateTime.UtcNow.AddDays(-12),
+            ClosingDate = DateTime.UtcNow.AddDays(18),
+            RankingStrategy = RankingStrategyType.Hybrid,
+            PostedByUserId = recruiter.Id
+        };
+        job1.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["C#"].Id, IsMandatory = true, Weight = 5, MinYearsExperience = 2 });
+        job1.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["ASP.NET Core"].Id, IsMandatory = true, Weight = 5, MinYearsExperience = 2 });
+        job1.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["SQL"].Id, IsMandatory = true, Weight = 4, MinYearsExperience = 2 });
+        job1.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["Entity Framework Core"].Id, IsMandatory = false, Weight = 3, MinYearsExperience = 1 });
+        job1.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["REST API Design"].Id, IsMandatory = false, Weight = 3, MinYearsExperience = 1 });
+        job1.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["Unit Testing"].Id, IsMandatory = false, Weight = 2, MinYearsExperience = 1 });
+
+        var job2 = new JobPosting
+        {
+            Title = "Senior Full-stack Engineer",
+            Description = "Northwind Logistics is hiring a senior engineer in Singapore to modernize internal shipment tracking and client visibility platforms. The role spans backend API development, frontend delivery and technical leadership across distributed product teams.",
+            Responsibilities = "Lead design decisions, build resilient APIs and React user interfaces, review pull requests, mentor engineers, improve CI/CD quality and work with operations stakeholders to deliver measurable platform improvements.",
+            OrganizationId = northwind.Id,
+            DepartmentId = engineering.Id,
+            City = "Singapore",
+            Country = "Singapore",
+            WorkMode = WorkMode.OnSite,
+            EmploymentType = EmploymentType.FullTime,
+            Seniority = SeniorityLevel.Senior,
+            MinYearsExperience = 5,
+            RequiredEducation = EducationLevel.Bachelors,
+            SalaryMin = 7000,
+            SalaryMax = 10000,
+            Currency = "SGD",
+            Status = JobStatus.Published,
+            PublishedAt = DateTime.UtcNow.AddDays(-9),
+            ClosingDate = DateTime.UtcNow.AddDays(21),
+            RankingStrategy = RankingStrategyType.Hybrid,
+            PostedByUserId = recruiter.Id
+        };
+        job2.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["C#"].Id, IsMandatory = true, Weight = 5, MinYearsExperience = 3 });
+        job2.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["React"].Id, IsMandatory = true, Weight = 5, MinYearsExperience = 2 });
+        job2.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["ASP.NET Core"].Id, IsMandatory = true, Weight = 4, MinYearsExperience = 3 });
+        job2.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["Docker"].Id, IsMandatory = false, Weight = 3, MinYearsExperience = 1 });
+        job2.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["CI/CD"].Id, IsMandatory = false, Weight = 3, MinYearsExperience = 1 });
+        job2.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["Team Leadership"].Id, IsMandatory = false, Weight = 2, MinYearsExperience = 1 });
+
+        var job3 = new JobPosting
+        {
+            Title = "Platform Engineer",
+            Description = "Halcyon Financial Group is expanding its digital banking platform in London and needs a platform engineer to improve reliability, automation and service delivery. This role suits engineers who enjoy cloud infrastructure, deployment pipelines and secure backend services.",
+            Responsibilities = "Maintain deployment pipelines, improve observability, containerize services, support cloud infrastructure, strengthen service reliability and partner with engineering teams to improve release confidence and runtime performance.",
+            OrganizationId = halcyon.Id,
+            DepartmentId = digitalBanking.Id,
+            City = "London",
+            Country = "United Kingdom",
+            WorkMode = WorkMode.Hybrid,
+            EmploymentType = EmploymentType.FullTime,
+            Seniority = SeniorityLevel.Senior,
+            MinYearsExperience = 4,
+            RequiredEducation = EducationLevel.Bachelors,
+            SalaryMin = 65000,
+            SalaryMax = 85000,
+            Currency = "GBP",
+            Status = JobStatus.Published,
+            PublishedAt = DateTime.UtcNow.AddDays(-7),
+            ClosingDate = DateTime.UtcNow.AddDays(25),
+            RankingStrategy = RankingStrategyType.ExperienceFirst,
+            PostedByUserId = recruiter.Id
+        };
+        job3.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["Azure"].Id, IsMandatory = true, Weight = 5, MinYearsExperience = 2 });
+        job3.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["Docker"].Id, IsMandatory = true, Weight = 4, MinYearsExperience = 2 });
+        job3.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["CI/CD"].Id, IsMandatory = true, Weight = 4, MinYearsExperience = 2 });
+        job3.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["Kubernetes"].Id, IsMandatory = false, Weight = 3, MinYearsExperience = 1 });
+        job3.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["Microservices"].Id, IsMandatory = false, Weight = 3, MinYearsExperience = 1 });
+        job3.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["Stakeholder Management"].Id, IsMandatory = false, Weight = 2, MinYearsExperience = 1 });
+
+        var job4 = new JobPosting
+        {
+            Title = "Junior QA Automation Engineer",
+            Description = "Meridian HR Consulting is looking for a junior engineer in Colombo to strengthen regression coverage and release confidence across recruiter and candidate workflows. The role is ideal for someone with a solid technical foundation who wants to grow into quality engineering and automation.",
+            Responsibilities = "Create and maintain automated test cases, execute regression suites, report defects clearly, collaborate with developers on bug reproduction, improve test data quality and support release validation across web application features.",
+            OrganizationId = meridian.Id,
+            DepartmentId = techPractice.Id,
+            City = "Colombo",
+            Country = "Sri Lanka",
+            WorkMode = WorkMode.Remote,
+            EmploymentType = EmploymentType.FullTime,
+            Seniority = SeniorityLevel.Junior,
+            MinYearsExperience = 1,
+            RequiredEducation = EducationLevel.Diploma,
+            SalaryMin = 90000,
+            SalaryMax = 140000,
+            Currency = "LKR",
+            Status = JobStatus.Published,
+            PublishedAt = DateTime.UtcNow.AddDays(-5),
+            ClosingDate = DateTime.UtcNow.AddDays(20),
+            RankingStrategy = RankingStrategyType.SkillWeighted,
+            PostedByUserId = recruiter.Id
+        };
+        job4.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["JavaScript"].Id, IsMandatory = true, Weight = 3, MinYearsExperience = 1 });
+        job4.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["Unit Testing"].Id, IsMandatory = true, Weight = 4, MinYearsExperience = 1 });
+        job4.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["Agile"].Id, IsMandatory = true, Weight = 3, MinYearsExperience = 1 });
+        job4.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["CI/CD"].Id, IsMandatory = false, Weight = 2, MinYearsExperience = 0 });
+        job4.RequiredSkills.Add(new JobRequiredSkill { SkillId = skills["SQL"].Id, IsMandatory = false, Weight = 2, MinYearsExperience = 0 });
+
+        _context.JobPostings.AddRange(job1, job2, job3, job4);
         await _context.SaveChangesAsync(ct);
     }
 
